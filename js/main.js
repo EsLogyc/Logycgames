@@ -1,6 +1,17 @@
 // ================================================================
 // UTILIDADES DE RENDER Y LOG
 // ================================================================
+function mezclarOpcionesPregunta(preg) {
+    const indices = preg.opciones.map((_, i) => i);
+    for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    const opcionesMezcladas = indices.map(i => preg.opciones[i]);
+    const nuevaCorrecta = indices.indexOf(preg.correcta);
+    return { ...preg, opciones: opcionesMezcladas, correcta: nuevaCorrecta };
+}
+
 function renderVista(html) {
     document.getElementById('vista-juego').innerHTML = html;
 }
@@ -12,7 +23,11 @@ function setTituloJuego(texto) {
 function logEvento(texto) {
     const cont = document.getElementById('chat-mensajes');
     const div = document.createElement('div');
-    div.className = 'msg sistema';
+    let clase = 'msg sistema';
+    if (texto.startsWith('✅')) clase += ' evento-acierto';
+    else if (texto.startsWith('❌') || texto.startsWith('💀')) clase += ' evento-fallo';
+    else if (texto.startsWith('🔓') || texto.startsWith('🏁') || texto.startsWith('🏆')) clase += ' evento-desbloqueo';
+    div.className = clase;
     div.textContent = texto;
     cont.appendChild(div);
     cont.scrollTop = cont.scrollHeight;
@@ -87,6 +102,29 @@ function actualizarPanelJugadores(jugadores, turnoActualIdx) {
 }
 
 // ================================================================
+// LISTA DE JUGADORES COMPARTIDA ENTRE TODOS LOS JUEGOS
+// ================================================================
+const CLAVE_JUGADORES = 'fiesta_jugadores';
+
+function cargarJugadoresGuardados() {
+    try {
+        const datos = localStorage.getItem(CLAVE_JUGADORES);
+        if (datos) {
+            const lista = JSON.parse(datos);
+            if (Array.isArray(lista) && lista.length > 0) return lista;
+        }
+    } catch (e) { /* localStorage no disponible */ }
+    return null;
+}
+
+function guardarJugadoresGuardados(lista) {
+    try {
+        const limpios = lista.map(n => n.trim()).filter(n => n !== '');
+        if (limpios.length > 0) localStorage.setItem(CLAVE_JUGADORES, JSON.stringify(limpios));
+    } catch (e) { /* almacenamiento no disponible, seguimos sin persistencia */ }
+}
+
+// ================================================================
 // SISTEMA DE PROGRESIÓN (localStorage)
 // ================================================================
 const CLAVE_PROGRESO = 'fiesta_progreso';
@@ -126,6 +164,18 @@ function aplicarProgresoUI(progreso) {
     ['barra-progreso', 'barra-progreso-movil'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.width = pct + '%';
+    });
+    ['avatar-anillo', 'avatar-anillo-movil'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.setProperty('--pct', pct);
+    });
+    const emojiAvatar = progreso.partidasJugadas === 0 ? '🎉'
+        : progreso.partidasJugadas < 4 ? '🥳'
+        : progreso.partidasJugadas < 8 ? '🎊'
+        : '🏆';
+    ['avatar-inner', 'avatar-inner-movil'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = emojiAvatar;
     });
     ['detalle-progreso', 'detalle-progreso-movil'].forEach(id => {
         const el = document.getElementById(id);

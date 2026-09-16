@@ -56,7 +56,7 @@ function crearPartidaTrivial() {
 function renderConfiguracionTrivial() {
     setTituloJuego('Trivial Streamers — Configuración');
     if (partidaTrivial.jugadores.length === 0) {
-        partidaTrivial.jugadores = ['Jugador 1', 'Jugador 2'];
+        partidaTrivial.jugadores = cargarJugadoresGuardados() || ['Jugador 1', 'Jugador 2'];
     }
 
     const filas = partidaTrivial.jugadores.map((nombre, i) => `
@@ -109,6 +109,7 @@ function renderConfiguracionTrivial() {
             return;
         }
         partidaTrivial.jugadores = nombresValidos;
+        guardarJugadoresGuardados(nombresValidos);
         nombresValidos.forEach(n => partidaTrivial.puntuaciones[n] = 0);
         partidaTrivial.preguntasOrden = [...PREGUNTAS_TRIVIAL.keys()].sort(() => Math.random() - 0.5).slice(0, NUM_PREGUNTAS_TRIVIAL);
         partidaTrivial.preguntaIndex = 0;
@@ -125,7 +126,9 @@ function renderConfiguracionTrivial() {
 function renderPreguntaTrivial() {
     setTituloJuego(`Trivial Streamers — Pregunta ${partidaTrivial.preguntaIndex + 1}/${NUM_PREGUNTAS_TRIVIAL}`);
     const jugadorActual = partidaTrivial.jugadores[partidaTrivial.turnoIndex];
-    const preg = PREGUNTAS_TRIVIAL[partidaTrivial.preguntasOrden[partidaTrivial.preguntaIndex]];
+    const pregOriginal = PREGUNTAS_TRIVIAL[partidaTrivial.preguntasOrden[partidaTrivial.preguntaIndex]];
+    const preg = mezclarOpcionesPregunta(pregOriginal);
+    partidaTrivial.preguntaActualMezclada = preg;
 
     actualizarPanelJugadores(partidaTrivial.jugadores, partidaTrivial.turnoIndex);
 
@@ -139,6 +142,7 @@ function renderPreguntaTrivial() {
             <div class="tarjeta-central">
                 <p style="font-weight:700; font-size:1.05rem; margin-bottom:16px;">${preg.pregunta}</p>
                 <div class="lista-votacion" id="opciones-trivial">${opciones}</div>
+                <div id="feedback-trivial"></div>
             </div>
         </div>
     `);
@@ -162,8 +166,15 @@ function resolverRespuestaTrivial(idxElegido, preg, jugadorActual) {
 
     document.querySelectorAll('#opciones-trivial .opcion-voto').forEach((el, i) => {
         el.style.pointerEvents = 'none';
-        if (i === preg.correcta) el.classList.add('seleccionado');
+        if (i === preg.correcta) el.classList.add('correcta');
+        else if (i === idxElegido) el.classList.add('incorrecta');
     });
+
+    const feedback = document.getElementById('feedback-trivial');
+    if (feedback) {
+        feedback.className = `feedback-respuesta ${acierto ? 'acierto' : 'fallo'}`;
+        feedback.textContent = acierto ? '✅ ¡Correcto!' : `❌ Fallo. Era: ${preg.opciones[preg.correcta]}`;
+    }
 
     setTimeout(() => {
         partidaTrivial.preguntaIndex++;
@@ -173,7 +184,7 @@ function resolverRespuestaTrivial(idxElegido, preg, jugadorActual) {
         } else {
             renderPreguntaTrivial();
         }
-    }, 1200);
+    }, 1800);
 }
 
 // ----------------------------------------------------------------

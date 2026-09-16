@@ -1,4 +1,25 @@
 // ================================================================
+// BANCO DE PALABRAS ALEATORIAS (por si no se os ocurre nada)
+// ================================================================
+const BANCO_PALABRAS_AHORCADO = [
+    'JIRAFA', 'ELEFANTE', 'PARAGUAS', 'BICICLETA', 'MONTAÑA', 'GUITARRA', 'CHOCOLATE', 'AEROPUERTO',
+    'MARIPOSA', 'TELEVISOR', 'ZAPATO', 'ESCALERA', 'DINOSAURIO', 'VOLCÁN', 'CASTILLO', 'TAMBOR',
+    'SEMÁFORO', 'PINGÜINO', 'TORTUGA', 'CALCETÍN', 'ALMOHADA', 'RELÁMPAGO', 'CANGURO', 'ESPEJO',
+    'PIZARRA', 'CAMPANA', 'LINTERNA', 'COCODRILO', 'PARACAÍDAS', 'TIBURÓN', 'ROBOT', 'PLANETA',
+    'CUCHARA', 'BALLENA', 'ARDILLA', 'MOCHILA', 'SANDÍA', 'ARCOÍRIS', 'FANTASMA', 'PIRATA',
+    'DRAGÓN', 'CASTAÑA', 'HORMIGA', 'GLOBO', 'TRINEO', 'MURCIÉLAGO', 'CANDADO', 'ERIZO',
+    'BRÚJULA', 'VENTILADOR', 'CEREZA', 'ALFOMBRA', 'CANOA', 'ESQUELETO', 'TIJERA', 'PANTUFLA',
+    'GALLETA', 'RASCACIELOS', 'CAMALEÓN', 'ABANICO', 'TORNADO', 'BUZÓN', 'COMETA', 'PANTANO',
+    'ZANAHORIA', 'TROMPETA', 'MALETA', 'CASCADA', 'LORO', 'AVISPA', 'GORRO', 'SILBATO',
+    'PULPO', 'NARANJA', 'ESTANTERÍA', 'TELARAÑA', 'BUFANDA', 'MOLINO', 'CANGREJO', 'FOGATA',
+    'RENACUAJO', 'SACAPUNTAS', 'TERMÓMETRO', 'INVERNADERO'
+];
+
+function obtenerPalabraAleatoriaAhorcado() {
+    return BANCO_PALABRAS_AHORCADO[Math.floor(Math.random() * BANCO_PALABRAS_AHORCADO.length)];
+}
+
+// ================================================================
 // AHORCADO EN EQUIPO — ESTADO Y FLUJO DEL JUEGO
 // ================================================================
 let partidaAhorcado = null;
@@ -31,7 +52,7 @@ function renderConfiguracionAhorcado() {
             <p class="subtexto">El resto del grupo intentará adivinarla en equipo</p>
             <div class="tarjeta-central">
                 <div class="fila-nombre">
-                    <input type="text" id="input-nombre-escritor" placeholder="Nombre de quien escribe" maxlength="16" />
+                    <input type="text" id="input-nombre-escritor" placeholder="Nombre de quien escribe" maxlength="16" value="${(cargarJugadoresGuardados() || [''])[0]}" />
                 </div>
                 <button class="btn-principal" style="margin-top:14px;" id="btn-pasar-a-escribir">Pasarle el dispositivo</button>
             </div>
@@ -71,6 +92,9 @@ function renderEntradaPalabra() {
             <p class="subtexto">Solo letras, sin espacios especiales raros. Nadie más debería estar mirando.</p>
             <div class="tarjeta-central">
                 <input type="password" id="input-palabra-secreta" class="input-palabra-secreta" placeholder="••••••" maxlength="20" autocomplete="off" />
+                <div style="margin-top:10px;">
+                    <button class="btn-secundario" id="btn-palabra-aleatoria">🎲 Ponme una aleatoria</button>
+                </div>
                 <button class="btn-principal" style="margin-top:16px;" id="btn-confirmar-palabra">Confirmar y ocultar</button>
             </div>
         </div>
@@ -78,6 +102,10 @@ function renderEntradaPalabra() {
 
     const input = document.getElementById('input-palabra-secreta');
     input.focus();
+    document.getElementById('btn-palabra-aleatoria').addEventListener('click', () => {
+        input.value = obtenerPalabraAleatoriaAhorcado();
+        input.focus();
+    });
     document.getElementById('btn-confirmar-palabra').addEventListener('click', () => {
         const palabra = input.value.trim().toUpperCase();
         if (palabra.length < 2) {

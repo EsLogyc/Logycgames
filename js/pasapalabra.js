@@ -35,7 +35,7 @@ const ROSCO_PASAPALABRA = [
 // PASAPALABRA — ESTADO Y FLUJO (modo cooperativo)
 // ================================================================
 let partidaPasapalabra = null;
-const TIEMPO_ROSCO_SEGUNDOS = 180;
+const TIEMPO_ROSCO_SEGUNDOS = 360;
 
 function crearPartidaPasapalabra() {
     partidaPasapalabra = {
@@ -147,14 +147,19 @@ function renderClaveActiva() {
                 <div class="letra-grande">${item.letra}</div>
                 <p style="text-align:center; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-secondary); margin-bottom:10px;">${prefijo}</p>
                 <p class="enunciado">${item.enunciado}</p>
-                <div style="text-align:center;">
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
                     <button class="btn-principal" id="btn-revelar-respuesta">Revelar respuesta</button>
+                    <button class="btn-secundario" id="btn-pasapalabra-antes">⏭️ Pasapalabra</button>
                 </div>
             </div>
         </div>
     `);
 
     partidaPasapalabra.temporizadorId = partidaPasapalabra.temporizadorId || setInterval(tickTemporizadorRosco, 1000);
+
+    document.getElementById('btn-pasapalabra-antes').addEventListener('click', () => {
+        marcarLetra(idx, 'pasada');
+    });
 
     document.getElementById('btn-revelar-respuesta').addEventListener('click', () => {
         renderVista(`

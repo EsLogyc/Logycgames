@@ -24,7 +24,7 @@ function crearPartidaImpostor() {
 function renderConfiguracionImpostor() {
     setTituloJuego('Impostor de palabra — Configuración');
     if (partidaImpostor.jugadores.length === 0) {
-        partidaImpostor.jugadores = ['Jugador 1', 'Jugador 2', 'Jugador 3'];
+        partidaImpostor.jugadores = cargarJugadoresGuardados() || ['Jugador 1', 'Jugador 2', 'Jugador 3'];
     }
 
     const filasNombres = partidaImpostor.jugadores.map((nombre, i) => `
@@ -100,6 +100,7 @@ function empezarRepartoImpostor() {
         return;
     }
     partidaImpostor.jugadores = nombresValidos;
+    guardarJugadoresGuardados(nombresValidos);
     partidaImpostor.palabraSecreta = obtenerPalabraAleatoria(partidaImpostor.categoria);
     partidaImpostor.impostorIndex = Math.floor(Math.random() * partidaImpostor.jugadores.length);
     partidaImpostor.jugadorActualIndex = 0;

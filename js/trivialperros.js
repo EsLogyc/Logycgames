@@ -44,9 +44,9 @@ const PREGUNTAS_TRIVIAL_PERROS = [
 
     // --- Chow Chow ---
     {
-        pregunta: '¿Qué raza es famosa por su lengua azul?',
+        pregunta: '¿Qué antigüedad aproximada tiene la raza Chow Chow?',
         imagen: 'img/perros/chowchow.jpg',
-        opciones: ['Chow Chow', 'Shar Pei', 'Akita Inu', 'Samoyedo'],
+        opciones: ['Más de 2.000 años', 'Menos de 100 años', 'Unos 300 años', 'Unos 50 años'],
         correcta: 0
     },
     {
@@ -65,7 +65,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- Border Collie ---
     {
         pregunta: '¿Qué raza es conocida por ser muy inteligente?',
-        imagen: 'img/perros/bordercollie.jpg',
+       // imagen: 'img/perros/bordercollie.jpg',
         opciones: ['Border Collie', 'Pastor Alemán', 'Beagle', 'Doberman'],
         correcta: 0
     },
@@ -105,7 +105,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- San Bernardo ---
     {
         pregunta: '¿Qué raza es famosa por su gran tamaño?',
-        imagen: 'img/perros/sanbernardo.jpg',
+       // imagen: 'img/perros/sanbernardo.jpg',
         opciones: ['San Bernardo', 'Mastín', 'Gran Danés', 'Terranova'],
         correcta: 0
     },
@@ -145,14 +145,14 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- Husky ---
     {
         pregunta: '¿Qué raza es conocida por tirar de trineos?',
-        imagen: 'img/perros/husky.jpg',
+        //imagen: 'img/perros/husky.jpg',
         opciones: ['Husky Siberiano', 'Malamute', 'Samoyedo', 'Pastor de Groenlandia'],
         correcta: 0
     },
     {
-        pregunta: '¿Qué color de ojos es común en el Husky?',
+        pregunta: '¿Qué característica del pelaje ayuda al Husky a soportar el frío extremo?',
         imagen: 'img/perros/husky.jpg',
-        opciones: ['Azules', 'Verdes', 'Negros', 'Marrones'],
+        opciones: ['Doble capa de pelo aislante', 'Ausencia total de pelo', 'Una sola capa fina', 'Pelo que cambia de color'],
         correcta: 0
     },
     {
@@ -185,7 +185,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- Caniche ---
     {
         pregunta: '¿Qué raza es famosa por su elegancia?',
-        imagen: 'img/perros/caniche.jpg',
+        //imagen: 'img/perros/caniche.jpg',
         opciones: ['Caniche', 'Bichón Frisé', 'Shih Tzu', 'Pomerania'],
         correcta: 0
     },
@@ -248,7 +248,7 @@ function renderConfiguracionTrivialPerros() {
     setTituloJuego('Trivial de Perros — Configuración');
 
     if (partidaTrivialPerros.jugadores.length === 0) {
-        partidaTrivialPerros.jugadores = ['Jugador 1', 'Jugador 2'];
+        partidaTrivialPerros.jugadores = cargarJugadoresGuardados() || ['Jugador 1', 'Jugador 2'];
     }
 
     const filas = partidaTrivialPerros.jugadores.map((nombre, i) => `
@@ -309,6 +309,7 @@ function renderConfiguracionTrivialPerros() {
         }
 
         partidaTrivialPerros.jugadores = nombresValidos;
+        guardarJugadoresGuardados(nombresValidos);
         nombresValidos.forEach(n => partidaTrivialPerros.puntuaciones[n] = 0);
 
         partidaTrivialPerros.preguntasOrden = [...PREGUNTAS_TRIVIAL_PERROS.keys()]
@@ -331,7 +332,8 @@ function renderPreguntaTrivialPerros() {
     setTituloJuego(`Trivial de Perros — Pregunta ${partidaTrivialPerros.preguntaIndex + 1}/${NUM_PREGUNTAS_TRIVIAL_PERROS}`);
 
     const jugadorActual = partidaTrivialPerros.jugadores[partidaTrivialPerros.turnoIndex];
-    const preg = PREGUNTAS_TRIVIAL_PERROS[partidaTrivialPerros.preguntasOrden[partidaTrivialPerros.preguntaIndex]];
+    const pregOriginal = PREGUNTAS_TRIVIAL_PERROS[partidaTrivialPerros.preguntasOrden[partidaTrivialPerros.preguntaIndex]];
+    const preg = mezclarOpcionesPregunta(pregOriginal);
 
     actualizarPanelJugadores(partidaTrivialPerros.jugadores, partidaTrivialPerros.turnoIndex);
 
@@ -344,14 +346,17 @@ function renderPreguntaTrivialPerros() {
             <h2>Turno de ${jugadorActual}</h2>
 
             <div class="tarjeta-central">
-                <img src="${preg.imagen}" class="foto-perro-triv" alt="Foto de la raza a identificar"
-                     onerror="this.outerHTML='<div class=&quot;foto-perro-fallback&quot;>🐶</div>'" />
+                ${preg.imagen
+                    ? `<img src="${preg.imagen}" class="foto-perro-triv" alt="Foto de la raza a identificar" onerror="this.outerHTML='<div class=&quot;foto-perro-fallback&quot;>🐶</div>'" />`
+                    : `<div class="foto-perro-fallback">🐶</div>`
+                }
 
                 <p style="font-weight:700; font-size:1.05rem; margin-bottom:16px;">
                     ${preg.pregunta}
                 </p>
 
                 <div class="lista-votacion" id="opciones-trivial-perros">${opciones}</div>
+                <div id="feedback-trivial-perros"></div>
             </div>
         </div>
     `);
@@ -376,8 +381,15 @@ function resolverRespuestaTrivialPerros(idxElegido, preg, jugadorActual) {
 
     document.querySelectorAll('#opciones-trivial-perros .opcion-voto').forEach((el, i) => {
         el.style.pointerEvents = 'none';
-        if (i === preg.correcta) el.classList.add('seleccionado');
+        if (i === preg.correcta) el.classList.add('correcta');
+        else if (i === idxElegido) el.classList.add('incorrecta');
     });
+
+    const feedback = document.getElementById('feedback-trivial-perros');
+    if (feedback) {
+        feedback.className = `feedback-respuesta ${acierto ? 'acierto' : 'fallo'}`;
+        feedback.textContent = acierto ? '✅ ¡Correcto!' : `❌ Fallo. Era: ${preg.opciones[preg.correcta]}`;
+    }
 
     setTimeout(() => {
         partidaTrivialPerros.preguntaIndex++;
@@ -388,7 +400,7 @@ function resolverRespuestaTrivialPerros(idxElegido, preg, jugadorActual) {
         } else {
             renderPreguntaTrivialPerros();
         }
-    }, 1200);
+    }, 1800);
 }
 
 // ================================================================
