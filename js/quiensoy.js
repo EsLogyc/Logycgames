@@ -32,7 +32,7 @@ let partidaQuienSoy = null;
 function crearPartidaQuienSoy() {
     partidaQuienSoy = {
         jugadores: [],
-        turnoEscritorIndex: 0,
+        turnoProtagonistaIndex: 0,
         personajeActual: '',
         rondasJugadas: 0,
         fase: 'configuracion'
@@ -60,7 +60,7 @@ function renderConfiguracionQuienSoy() {
         <div class="pantalla-juego">
             <button class="btn-volver" id="btn-volver-selector-qs">← Volver a minijuegos</button>
             <h2>🎭 ¿Quién soy?</h2>
-            <p class="subtexto">Uno piensa un personaje (real, ficticio, lo que sea) y el otro lo adivina haciendo preguntas de sí o no.</p>
+            <p class="subtexto">Todos ven el personaje excepto el protagonista de la ronda, que debe adivinarlo haciendo preguntas de sí o no.</p>
             <div class="tarjeta-central">
                 <div class="lista-nombres" id="lista-nombres-quiensoy">${filas}</div>
                 <div style="margin-top:14px; display:flex; gap:10px; justify-content:center;">
@@ -100,46 +100,50 @@ function renderConfiguracionQuienSoy() {
         }
         partidaQuienSoy.jugadores = nombresValidos;
         guardarJugadoresGuardados(nombresValidos);
-        partidaQuienSoy.turnoEscritorIndex = 0;
+        partidaQuienSoy.turnoProtagonistaIndex = 0;
         logEvento(`🎭 Nueva partida de ¿Quién soy? con ${nombresValidos.length} jugadores.`);
         actualizarPanelJugadores(partidaQuienSoy.jugadores, 0);
-        renderPaseParaEscribirQuienSoy();
+        renderAvisoAlejarseProtagonista();
     });
 }
 
 // ----------------------------------------------------------------
-// FASE 2: ESCRIBIR EL PERSONAJE EN SECRETO
+// FASE 2: EL PROTAGONISTA SE APARTA (no debe ver la pantalla)
 // ----------------------------------------------------------------
-function renderPaseParaEscribirQuienSoy() {
-    setTituloJuego('¿Quién soy? — Eligiendo personaje');
-    const escritor = partidaQuienSoy.jugadores[partidaQuienSoy.turnoEscritorIndex];
+function renderAvisoAlejarseProtagonista() {
+    setTituloJuego('¿Quién soy? — Preparando ronda');
+    const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     renderVista(`
         <div class="pantalla-juego">
-            <h2>📱 Pasa el dispositivo</h2>
+            <h2>🙈 Que ${protagonista} no mire la pantalla</h2>
             <div class="tarjeta-central pase-dispositivo">
-                <div class="icono-pase">🤫</div>
-                <div class="nombre-jugador-grande">Entrégaselo a ${escritor}</div>
-                <p class="subtexto" style="margin-top:8px;">Va a elegir el personaje que el resto debe adivinar</p>
-                <button class="btn-principal" style="margin-top:20px;" id="btn-escribir-personaje">Soy ${escritor}, quiero escribirlo</button>
+                <div class="icono-pase">🙈</div>
+                <p class="subtexto">${protagonista} es el protagonista de esta ronda: tiene que apartarse, cerrar los ojos o darse la vuelta. El resto del grupo va a elegir su personaje.</p>
+                <button class="btn-principal" style="margin-top:16px;" id="btn-protagonista-listo">${protagonista} ya no mira, continuar</button>
             </div>
         </div>
     `);
 
-    document.getElementById('btn-escribir-personaje').addEventListener('click', renderEntradaPersonajeQuienSoy);
+    document.getElementById('btn-protagonista-listo').addEventListener('click', renderEntradaPersonajeQuienSoy);
 }
 
+// ----------------------------------------------------------------
+// FASE 3: EL RESTO DEL GRUPO ELIGE EL PERSONAJE
+// ----------------------------------------------------------------
 function renderEntradaPersonajeQuienSoy() {
+    const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
+
     renderVista(`
         <div class="pantalla-juego">
-            <h2>✍️ Escribe el personaje</h2>
-            <p class="subtexto">Puede ser real, de ficción, un famoso, un dibujo animado... lo que se te ocurra</p>
+            <h2>✍️ El resto del grupo elige el personaje</h2>
+            <p class="subtexto">Puede ser real, de ficción, un famoso, un dibujo animado... lo que se os ocurra. ${protagonista} no debe ver esto.</p>
             <div class="tarjeta-central">
-                <input type="password" id="input-personaje-secreto" class="input-personaje-secreto" placeholder="••••••••" autocomplete="off" />
+                <input type="text" id="input-personaje-secreto" class="input-personaje-secreto" placeholder="Escribid el personaje" autocomplete="off" />
                 <div style="margin-top:10px;">
-                    <button class="btn-secundario" id="btn-personaje-aleatorio">🎲 Ponme uno aleatorio</button>
+                    <button class="btn-secundario" id="btn-personaje-aleatorio">🎲 Ponnos uno aleatorio</button>
                 </div>
-                <button class="btn-principal" style="margin-top:16px;" id="btn-confirmar-personaje">Confirmar y ocultar</button>
+                <button class="btn-principal" style="margin-top:16px;" id="btn-confirmar-personaje">Confirmar y mostrarlo al grupo</button>
             </div>
         </div>
     `);
@@ -153,51 +157,53 @@ function renderEntradaPersonajeQuienSoy() {
     document.getElementById('btn-confirmar-personaje').addEventListener('click', () => {
         const personaje = input.value.trim();
         if (personaje.length < 2) {
-            logEvento('⚠️ Escribe un personaje válido antes de continuar.');
+            logEvento('⚠️ Escribid un personaje válido antes de continuar.');
             return;
         }
         partidaQuienSoy.personajeActual = personaje;
-        logEvento(`🎭 Personaje elegido. Empieza la ronda de preguntas.`);
-        renderAvisoAdivinadorQuienSoy();
+        logEvento(`🎭 Personaje elegido para ${protagonista}.`);
+        renderRevelarAlGrupo();
     });
     input.addEventListener('keydown', e => {
         if (e.key === 'Enter') document.getElementById('btn-confirmar-personaje').click();
     });
 }
 
-function renderAvisoAdivinadorQuienSoy() {
-    const escritor = partidaQuienSoy.jugadores[partidaQuienSoy.turnoEscritorIndex];
+// ----------------------------------------------------------------
+// FASE 4: SE MUESTRA A TODOS MENOS AL PROTAGONISTA
+// ----------------------------------------------------------------
+function renderRevelarAlGrupo() {
+    const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     renderVista(`
         <div class="pantalla-juego">
-            <h2>📱 Que ${escritor} se quede el dispositivo</h2>
-            <div class="tarjeta-central pase-dispositivo">
-                <div class="icono-pase">🙈</div>
-                <p class="subtexto">El resto pregunta en voz alta cosas que se respondan con sí o no. ${escritor} mira la pantalla y responde sin enseñarla.</p>
-                <button class="btn-principal" style="margin-top:16px;" id="btn-ver-personaje-secreto">Ver mi personaje</button>
+            <h2>👀 Que todo el grupo lo memorice</h2>
+            <div class="tarjeta-central tarjeta-personaje">
+                <p class="subtexto">El personaje de ${protagonista} es:</p>
+                <div class="personaje-nombre">${partidaQuienSoy.personajeActual}</div>
+                <p class="subtexto">${protagonista} sigue sin mirar. Cuando todos lo tengáis claro, que vuelva a la partida.</p>
             </div>
+            <button class="btn-principal" id="btn-que-vuelva">Ya lo sabemos, que vuelva ${protagonista}</button>
         </div>
     `);
 
-    document.getElementById('btn-ver-personaje-secreto').addEventListener('click', renderPersonajeSecretoQuienSoy);
+    document.getElementById('btn-que-vuelva').addEventListener('click', renderRondaPreguntasQuienSoy);
 }
 
 // ----------------------------------------------------------------
-// FASE 3: RONDA DE PREGUNTAS (el escritor controla la pantalla)
+// FASE 5: RONDA DE PREGUNTAS (el grupo responde de memoria)
 // ----------------------------------------------------------------
-function renderPersonajeSecretoQuienSoy() {
+function renderRondaPreguntasQuienSoy() {
     setTituloJuego('¿Quién soy? — Ronda de preguntas');
-    const escritor = partidaQuienSoy.jugadores[partidaQuienSoy.turnoEscritorIndex];
+    const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     renderVista(`
         <div class="pantalla-juego">
-            <h2>Solo tú deberías ver esto, ${escritor}</h2>
-            <div class="tarjeta-central tarjeta-personaje">
-                <p class="subtexto">El personaje que deben adivinar es:</p>
-                <div class="personaje-nombre">${partidaQuienSoy.personajeActual}</div>
-                <p class="subtexto">Responde sí/no en voz alta a sus preguntas sin enseñar la pantalla</p>
+            <h2>🎤 ${protagonista}, pregunta lo que quieras</h2>
+            <div class="tarjeta-central">
+                <p class="subtexto">Haz preguntas en voz alta que se respondan con sí o no. El resto del grupo responde de memoria, sin enseñarte la pantalla.</p>
             </div>
-            <button class="btn-principal" id="btn-han-acertado">🎉 ¡Lo han adivinado!</button>
+            <button class="btn-principal" id="btn-han-acertado">🎉 ¡Lo he adivinado!</button>
         </div>
     `);
 
@@ -205,7 +211,7 @@ function renderPersonajeSecretoQuienSoy() {
 }
 
 // ----------------------------------------------------------------
-// FASE 4: RESULTADO DE LA RONDA Y SIGUIENTE TURNO
+// FASE 6: RESULTADO DE LA RONDA Y SIGUIENTE TURNO
 // ----------------------------------------------------------------
 function mostrarResultadoRondaQuienSoy() {
     partidaQuienSoy.rondasJugadas++;
@@ -220,15 +226,15 @@ function mostrarResultadoRondaQuienSoy() {
                 <p>Era: <strong>${partidaQuienSoy.personajeActual}</strong></p>
             </div>
             <div style="display:flex; gap:10px; justify-content:center;">
-                <button class="btn-secundario" id="btn-cambiar-turno-quiensoy">Cambiar quién escribe</button>
+                <button class="btn-secundario" id="btn-cambiar-turno-quiensoy">Cambiar de protagonista</button>
                 <button class="btn-principal" id="btn-volver-menu-quiensoy">Volver al menú</button>
             </div>
         </div>
     `);
 
     document.getElementById('btn-cambiar-turno-quiensoy').addEventListener('click', () => {
-        partidaQuienSoy.turnoEscritorIndex = (partidaQuienSoy.turnoEscritorIndex + 1) % partidaQuienSoy.jugadores.length;
-        renderPaseParaEscribirQuienSoy();
+        partidaQuienSoy.turnoProtagonistaIndex = (partidaQuienSoy.turnoProtagonistaIndex + 1) % partidaQuienSoy.jugadores.length;
+        renderAvisoAlejarseProtagonista();
     });
     document.getElementById('btn-volver-menu-quiensoy').addEventListener('click', mostrarSelectorJuegos);
 }
