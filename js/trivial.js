@@ -62,7 +62,7 @@ function renderConfiguracionTrivial() {
     const filas = partidaTrivial.jugadores.map((nombre, i) => `
         <div class="fila-nombre">
             <input type="text" value="${nombre}" data-idx="${i}" class="input-nombre-trivial" maxlength="16" />
-            ${partidaTrivial.jugadores.length > 2 ? `<button class="quitar-jugador-trivial" data-idx="${i}">✕</button>` : ''}
+            ${partidaTrivial.jugadores.length > 1 ? `<button class="quitar-jugador-trivial" data-idx="${i}">✕</button>` : ''}
         </div>
     `).join('');
 
@@ -104,8 +104,8 @@ function renderConfiguracionTrivial() {
 
     document.getElementById('btn-empezar-trivial').addEventListener('click', () => {
         const nombresValidos = partidaTrivial.jugadores.filter(n => n.trim() !== '');
-        if (nombresValidos.length < 2) {
-            logEvento('⚠️ Necesitas al menos 2 jugadores para el Trivial.');
+        if (nombresValidos.length < 1) {
+            logEvento('⚠️ Escribe al menos un nombre de jugador.');
             return;
         }
         partidaTrivial.jugadores = nombresValidos;
@@ -194,6 +194,7 @@ function mostrarResultadoTrivial() {
     setTituloJuego('Trivial de Streamers — Resultado');
     const ranking = Object.entries(partidaTrivial.puntuaciones).sort((a, b) => b[1] - a[1]);
     const ganador = ranking[0];
+    const esSolitario = partidaTrivial.jugadores.length === 1;
 
     const filasRanking = ranking.map(([nombre, puntos], i) => `
         <div class="ranking .item" style="display:flex; justify-content:space-between; padding:6px 0; ${i === 0 ? 'font-weight:800; color:var(--gold-dark);' : ''}">
@@ -204,7 +205,7 @@ function mostrarResultadoTrivial() {
     renderVista(`
         <div class="pantalla-juego">
             <div class="tarjeta-central">
-                <div class="veredicto">🏆 ¡${ganador[0]} gana el Trivial!</div>
+                <div class="veredicto">${esSolitario ? `🎯 ¡${ganador[1]} puntos de ${NUM_PREGUNTAS_TRIVIAL}!` : `🏆 ¡${ganador[0]} gana el Trivial!`}</div>
                 <div style="margin-top:14px; text-align:left; max-width:280px; margin-left:auto; margin-right:auto;">${filasRanking}</div>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
@@ -215,11 +216,15 @@ function mostrarResultadoTrivial() {
         </div>
     `);
 
-    logEvento(`🏁 Trivial terminado. Gana ${ganador[0]} con ${ganador[1]} puntos.`);
+    logEvento(esSolitario
+        ? `🏁 Trivial terminado. ${ganador[1]}/${NUM_PREGUNTAS_TRIVIAL} puntos.`
+        : `🏁 Trivial terminado. Gana ${ganador[0]} con ${ganador[1]} puntos.`);
     registrarPartidaCompletada();
 
     document.getElementById('btn-compartir-trivial').addEventListener('click', () => {
-        compartirResultado(`🏆 ¡${ganador[0]} ganó el Trivial de Streamers con ${ganador[1]} puntos! ¿Te atreves a superarlo?`);
+        compartirResultado(esSolitario
+            ? `🎯 ¡Saqué ${ganador[1]}/${NUM_PREGUNTAS_TRIVIAL} en el Trivial de Streamers! ¿Te atreves a superarlo?`
+            : `🏆 ¡${ganador[0]} ganó el Trivial de Streamers con ${ganador[1]} puntos! ¿Te atreves a superarlo?`);
     });
     document.getElementById('btn-otra-trivial').addEventListener('click', () => {
         const jugadoresAnteriores = partidaTrivial.jugadores;

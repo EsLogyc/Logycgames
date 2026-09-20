@@ -254,7 +254,7 @@ function renderConfiguracionTrivialPerros() {
     const filas = partidaTrivialPerros.jugadores.map((nombre, i) => `
         <div class="fila-nombre">
             <input type="text" value="${nombre}" data-idx="${i}" class="input-nombre-trivial" maxlength="16" />
-            ${partidaTrivialPerros.jugadores.length > 2 ? `<button class="quitar-jugador-trivial-perros" data-idx="${i}">✕</button>` : ''}
+            ${partidaTrivialPerros.jugadores.length > 1 ? `<button class="quitar-jugador-trivial-perros" data-idx="${i}">✕</button>` : ''}
         </div>
     `).join('');
 
@@ -303,8 +303,8 @@ function renderConfiguracionTrivialPerros() {
 
     document.getElementById('btn-empezar-trivial-perros').addEventListener('click', () => {
         const nombresValidos = partidaTrivialPerros.jugadores.filter(n => n.trim() !== '');
-        if (nombresValidos.length < 2) {
-            logEvento('⚠️ Necesitas al menos 2 jugadores para el Trivial.');
+        if (nombresValidos.length < 1) {
+            logEvento('⚠️ Escribe al menos un nombre de jugador.');
             return;
         }
 
@@ -413,6 +413,7 @@ function mostrarResultadoTrivialPerros() {
         .sort((a, b) => b[1] - a[1]);
 
     const ganador = ranking[0];
+    const esSolitario = partidaTrivialPerros.jugadores.length === 1;
 
     const filasRanking = ranking.map(([nombre, puntos], i) => `
         <div class="ranking item"
@@ -426,7 +427,7 @@ function mostrarResultadoTrivialPerros() {
     renderVista(`
         <div class="pantalla-juego">
             <div class="tarjeta-central">
-                <div class="veredicto">🏆 ¡${ganador[0]} gana el Trivial de Perros!</div>
+                <div class="veredicto">${esSolitario ? `🎯 ¡${ganador[1]} puntos de ${NUM_PREGUNTAS_TRIVIAL_PERROS}!` : `🏆 ¡${ganador[0]} gana el Trivial de Perros!`}</div>
 
                 <div style="margin-top:14px; text-align:left; max-width:280px; margin-left:auto; margin-right:auto;">
                     ${filasRanking}
@@ -441,11 +442,15 @@ function mostrarResultadoTrivialPerros() {
         </div>
     `);
 
-    logEvento(`🏁 Trivial de Perros terminado. Gana ${ganador[0]} con ${ganador[1]} puntos.`);
+    logEvento(esSolitario
+        ? `🏁 Trivial de Perros terminado. ${ganador[1]}/${NUM_PREGUNTAS_TRIVIAL_PERROS} puntos.`
+        : `🏁 Trivial de Perros terminado. Gana ${ganador[0]} con ${ganador[1]} puntos.`);
     registrarPartidaCompletada();
 
     document.getElementById('btn-compartir-trivial-perros').addEventListener('click', () => {
-        compartirResultado(`🐶 ¡${ganador[0]} ganó el Trivial de Perros con ${ganador[1]} puntos! ¿Te atreves a superarlo?`);
+        compartirResultado(esSolitario
+            ? `🐶 ¡Saqué ${ganador[1]}/${NUM_PREGUNTAS_TRIVIAL_PERROS} en el Trivial de Perros! ¿Te atreves a superarlo?`
+            : `🐶 ¡${ganador[0]} ganó el Trivial de Perros con ${ganador[1]} puntos! ¿Te atreves a superarlo?`);
     });
 
     // Botón: jugar otra ronda

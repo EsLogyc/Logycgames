@@ -56,6 +56,10 @@ function renderConfiguracionAhorcado() {
                 </div>
                 <button class="btn-principal" style="margin-top:14px;" id="btn-pasar-a-escribir">Pasarle el dispositivo</button>
             </div>
+            <div class="tarjeta-central">
+                <p class="subtexto" style="margin-bottom:10px;">¿Juegas tú solo? El juego elige una palabra al azar y la adivinas tú mismo.</p>
+                <button class="btn-secundario" id="btn-jugar-solo-ahorcado">🙋 Jugar yo solo</button>
+            </div>
         </div>
     `);
 
@@ -64,6 +68,13 @@ function renderConfiguracionAhorcado() {
         const nombre = document.getElementById('input-nombre-escritor').value.trim() || 'El escritor';
         partidaAhorcado.nombreQuienEscribe = nombre;
         renderPaseParaEscribir();
+    });
+    document.getElementById('btn-jugar-solo-ahorcado').addEventListener('click', () => {
+        partidaAhorcado.nombreQuienEscribe = 'el juego';
+        partidaAhorcado.palabraSecreta = obtenerPalabraAleatoriaAhorcado();
+        partidaAhorcado.modoSolitario = true;
+        logEvento('🎯 Partida en solitario de Ahorcado. ¡A adivinar!');
+        renderJuegoAhorcado();
     });
 }
 
