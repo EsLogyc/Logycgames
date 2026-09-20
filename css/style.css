@@ -599,3 +599,219 @@ html, body {
 .ultimo-juego { background: var(--bg-card); border-radius: var(--radius); padding: 12px 16px; }
 .ultimo-juego .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 600; margin-bottom: 6px; }
 .ultimo-juego #texto-ultimo-juego { font-size: 0.82rem; color: var(--text-primary); }
+
+/* ================================================================
+   ADIVINA EL CÓDIGO — estética tipo Pasapalabra
+   ================================================================ */
+
+.tablero-codigo {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fila-pista {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--bg-body);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+.fila-pista:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.08);
+}
+
+.fila-pista .num-fila {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+}
+
+.fila-pista .combinacion {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.fila-pista .pistas {
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    min-width: 56px;
+    text-align: right;
+    color: var(--text-primary);
+}
+
+.digito-codigo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 26px;
+    padding: 0 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: var(--transition);
+    color: var(--text-primary);
+}
+.digito-codigo:hover {
+    background: var(--bg-card);
+    color: var(--gold-dark);
+}
+.digito-codigo.tachado {
+    text-decoration: line-through;
+    color: var(--text-light);
+    opacity: 0.5;
+}
+
+.teclado-tachar {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.tecla-tachar {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+.tecla-tachar:hover {
+    border-color: var(--gold);
+    transform: scale(1.08);
+}
+.tecla-tachar.tachado {
+    background: var(--bg-body);
+    color: var(--text-light);
+    text-decoration: line-through;
+    opacity: 0.55;
+}
+
+.label-codigo {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.casillas-codigo {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.casilla-codigo {
+    width: 46px;
+    height: 54px;
+    padding: 0;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    outline: none;
+    transition: var(--transition);
+    caret-color: var(--gold);
+}
+.casilla-codigo:focus {
+    border-color: var(--gold);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(212, 168, 67, 0.15);
+}
+.casilla-codigo.rellena {
+    border-color: var(--gold-dark);
+    background: var(--bg-card);
+}
+.casilla-codigo:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+@keyframes shake-codigo {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+.casillas-codigo.shake {
+    animation: shake-codigo 0.4s ease;
+}
+
+.casillas-codigo.acertado .casilla-codigo {
+    border-color: #3d8b63;
+    background: rgba(76, 175, 125, 0.12);
+    color: #3d8b63;
+}
+
+.codigo-descifrado {
+    font-family: ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 10px;
+    color: var(--gold-dark);
+    text-align: center;
+    margin: 10px 0 4px;
+    padding-left: 10px;
+}
+
+@media (max-width: 380px) {
+    .casilla-codigo {
+        width: 40px;
+        height: 48px;
+        font-size: 1.4rem;
+    }
+    .fila-pista .combinacion {
+        font-size: 1rem;
+    }
+    .digito-codigo {
+        min-width: 16px;
+        height: 22px;
+        padding: 0 3px;
+    }
+    .tecla-tachar {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+}
+#chat-input { display: flex; gap: 8px; padding: 10px 16px 14px; border-top: 1px solid var(--border-color); flex-shrink: 0; }
+#chat-input input { flex: 1; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 0.8rem; outline: none; font-family: var(--font); background: var(--bg-body); color: var(--text-primary); transition: var(--transition); }
+#chat-input input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.1); }
+#chat-input button { padding: 8px 16px; border: none; border-radius: 20px; background: var(--gold); color: white; font-size: 0.9rem; cursor: pointer; transition: var(--transition); font-family: var(--font); font-weight: 600; }
+#chat-input button:hover { background: var(--gold-dark); }

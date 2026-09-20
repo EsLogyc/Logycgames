@@ -326,6 +326,7 @@ function mostrarResultadoImpostor() {
 
     logEvento(`🏁 Partida terminada. ${acertaron ? 'Ganaron los tripulantes' : 'Ganó el impostor'} (era ${nombreImpostor})`);
     registrarPartidaCompletada();
+    if (acertaron) registrarVictoria();
 
     document.getElementById('btn-otra-partida').addEventListener('click', () => {
         const jugadoresAnteriores = partidaImpostor.jugadores;

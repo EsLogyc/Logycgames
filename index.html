@@ -39,9 +39,8 @@
                 <div class="rango" id="rango-sesion">🔰 Recién empezada</div>
             </div>
             <div class="progreso">
-                <div class="label">🏆 Progreso de desbloqueos</div>
-                <div class="barra"><div class="relleno" id="barra-progreso" style="width:0%;"></div></div>
-                <div class="detalle"><span id="detalle-progreso">0 / 10 partidas</span><span id="detalle-porcentaje">0%</span></div>
+                <div class="label">📊 Estadísticas</div>
+                <div class="detalle"><span id="detalle-progreso">🎮 0 jugadas</span><span id="detalle-porcentaje">🏆 0 ganadas</span></div>
             </div>
             <div class="ultimo-juego" id="bloque-ultimo-juego" style="display:none;">
                 <div class="label">🕹️ Última partida</div>
@@ -73,6 +72,10 @@
             <div id="chat-mensajes">
                 <div class="msg sistema">🎉 Bienvenido. Elige un minijuego para empezar.</div>
             </div>
+            <div id="chat-input">
+                <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
+                <button id="chat-input-enviar" aria-label="Enviar">➤</button>
+            </div>
         </aside>
 
         <!-- PANEL MÓVIL (estado de la partida) -->
@@ -81,13 +84,17 @@
             <div class="panel-content">
                 <button class="cerrar-panel" id="cerrar-panel-movil">✕</button>
                 <div class="perfil"><div class="avatar-anillo" id="avatar-anillo-movil" style="--pct:0;"><div class="avatar-inner" id="avatar-inner-movil">🎉</div></div><div class="nombre" id="nombre-sesion-movil">Sesión de fiesta</div><div class="rango" id="rango-sesion-movil">🔰 Recién empezada</div></div>
-                <div class="progreso"><div class="label">🏆 Progreso</div><div class="barra"><div class="relleno" id="barra-progreso-movil" style="width:0%;"></div></div><div class="detalle"><span id="detalle-progreso-movil">0 / 10 partidas</span><span id="detalle-porcentaje-movil">0%</span></div></div>
+                <div class="progreso"><div class="label">📊 Estadísticas</div><div class="detalle"><span id="detalle-progreso-movil">🎮 0 jugadas</span><span id="detalle-porcentaje-movil">🏆 0 ganadas</span></div></div>
                 <div class="jugadores-panel"><div class="label">👥 Jugadores</div><div id="lista-jugadores-panel-movil"><span class="vacio">Sin partida activa</span></div></div>
             </div>
         </div>
 
     </div>
 
+    <!-- 1) SDK de Supabase SIEMPRE el primero -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 2) Tus juegos -->
     <script src="js/juegos-data.js"></script>
     <script src="js/impostor.js"></script>
     <script src="js/ahorcado.js"></script>
@@ -95,6 +102,13 @@
     <script src="js/pasapalabra.js"></script>
     <script src="js/trivialperros.js"></script>
     <script src="js/quiensoy.js"></script>
+    <script src="js/codigo.js"></script>
+
+    <!-- 3) El chat, DESPUÉS del SDK y ANTES de main.js -->
+    <script src="js/chat.js"></script>
+
+    <!-- 4) main.js el último, porque llama a inicializarChat() -->
     <script src="js/main.js"></script>
+
 </body>
 </html>

@@ -50,6 +50,61 @@ function compartirResultado(texto) {
 }
 
 // ================================================================
+// BIENVENIDA: PEDIR NOMBRE AL ENTRAR POR PRIMERA VEZ
+// ================================================================
+const BANCO_NOMBRES_ABSURDOS = [
+    'Ustaquio', 'Anacleta', 'Herminia', 'Cirilo', 'Filomena', 'Segismundo', 'Petronila',
+    'Bartolo', 'Eustaquia', 'Melquíades', 'Rosalinda', 'Casimiro', 'Encarnación', 'Wenceslao',
+    'Trinidad', 'Hermenegildo', 'Dorotea', 'Ceferino', 'Baldomero', 'Genoveva', 'Aniceto',
+    'Sinforosa', 'Prudencio', 'Escolástica', 'Teodulfo', 'Remedios', 'Fulgencio', 'Perpetua'
+];
+
+function obtenerNombreAbsurdo() {
+    return BANCO_NOMBRES_ABSURDOS[Math.floor(Math.random() * BANCO_NOMBRES_ABSURDOS.length)];
+}
+
+function renderBienvenidaNombre() {
+    const nombreActual = (cargarJugadoresGuardados() || [''])[0];
+
+    renderVista(`
+        <div class="pantalla-juego">
+            <h2>👋 ¿Cómo te llamas?</h2>
+            <p class="subtexto">Así te reconoceremos cada vez que entres en esta plataforma</p>
+            <div class="tarjeta-central">
+                <input type="text" id="input-nombre-bienvenida" class="input-personaje-secreto" placeholder="Tu nombre" maxlength="16" value="${nombreActual}" autocomplete="off" />
+                <div style="margin-top:10px;">
+                    <button class="btn-secundario" id="btn-nombre-absurdo">🎲 Nombre absurdo</button>
+                </div>
+                <button class="btn-principal" style="margin-top:16px;" id="btn-confirmar-nombre-bienvenida">Continuar</button>
+            </div>
+        </div>
+    `);
+
+    const input = document.getElementById('input-nombre-bienvenida');
+    input.focus();
+    document.getElementById('btn-nombre-absurdo').addEventListener('click', () => {
+        input.value = obtenerNombreAbsurdo();
+        input.focus();
+    });
+    const confirmar = () => {
+        const nombre = input.value.trim();
+        if (nombre.length < 2) {
+            logEvento('⚠️ Escribe un nombre válido antes de continuar.');
+            return;
+        }
+        const listaActual = cargarJugadoresGuardados() || [];
+        listaActual[0] = nombre;
+        guardarJugadoresGuardados(listaActual.length > 0 ? listaActual : [nombre]);
+        aplicarPersonalizacionPanel();
+        mostrarSelectorJuegos();
+    };
+    document.getElementById('btn-confirmar-nombre-bienvenida').addEventListener('click', confirmar);
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') confirmar();
+    });
+}
+
+// ================================================================
 // SELECTOR DE MINIJUEGOS (pantalla inicial)
 // ================================================================
 function mostrarSelectorJuegos() {
@@ -94,6 +149,8 @@ function mostrarSelectorJuegos() {
                 crearPartidaTrivialPerros();
             } else if (id === 'quiensoy') {
                 crearPartidaQuienSoy();
+            } else if (id === 'codigo') {
+                crearPartidaCodigo();
             }
         });
     });
@@ -205,7 +262,7 @@ function cargarProgreso() {
         const datos = localStorage.getItem(CLAVE_PROGRESO);
         if (datos) return JSON.parse(datos);
     } catch (e) { /* localStorage no disponible */ }
-    return { partidasJugadas: 0, mejorasDesbloqueadas: [] };
+    return { partidasJugadas: 0, partidasGanadas: 0, mejorasDesbloqueadas: [] };
 }
 
 function guardarProgreso(progreso) {
@@ -216,6 +273,7 @@ function guardarProgreso(progreso) {
 
 function registrarPartidaCompletada() {
     const progreso = cargarProgreso();
+    if (typeof progreso.partidasGanadas !== 'number') progreso.partidasGanadas = 0;
     progreso.partidasJugadas++;
 
     const yaDesbloqueada = progreso.mejorasDesbloqueadas.includes(progreso.partidasJugadas);
@@ -228,13 +286,22 @@ function registrarPartidaCompletada() {
     aplicarProgresoUI(progreso);
 }
 
+// Solo se llama desde los juegos que tienen un desenlace claro de "victoria"
+// (Adivina el Código, Ahorcado en equipo, Impostor cuando descubren al impostor).
+// Los juegos de puntuación (Trivial, Definiciones) no suman aquí porque no
+// tienen un "ganar/perder" binario tan claro.
+function registrarVictoria() {
+    const progreso = cargarProgreso();
+    if (typeof progreso.partidasGanadas !== 'number') progreso.partidasGanadas = 0;
+    progreso.partidasGanadas++;
+    guardarProgreso(progreso);
+    aplicarProgresoUI(progreso);
+}
+
 function aplicarProgresoUI(progreso) {
     const pct = Math.min(100, Math.round((progreso.partidasJugadas / META_PARTIDAS) * 100));
+    const ganadas = progreso.partidasGanadas || 0;
 
-    ['barra-progreso', 'barra-progreso-movil'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.width = pct + '%';
-    });
     ['avatar-anillo', 'avatar-anillo-movil'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.setProperty('--pct', pct);
@@ -249,11 +316,11 @@ function aplicarProgresoUI(progreso) {
     });
     ['detalle-progreso', 'detalle-progreso-movil'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.textContent = `${progreso.partidasJugadas} / ${META_PARTIDAS} partidas`;
+        if (el) el.textContent = `🎮 ${progreso.partidasJugadas} jugadas`;
     });
     ['detalle-porcentaje', 'detalle-porcentaje-movil'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.textContent = pct + '%';
+        if (el) el.textContent = `🏆 ${ganadas} ganadas`;
     });
 
     const rangoTexto = progreso.partidasJugadas === 0 ? '🔰 Recién empezada'
@@ -321,5 +388,16 @@ panelOverlay.addEventListener('click', cerrarPanelMovilFn);
 // ================================================================
 aplicarProgresoUI(cargarProgreso());
 aplicarPersonalizacionPanel();
-mostrarSelectorJuegos();
+if (cargarJugadoresGuardados()) {
+    mostrarSelectorJuegos();
+} else {
+    renderBienvenidaNombre();
+}
+
+document.getElementById('nombre-usuario').style.cursor = 'pointer';
+document.getElementById('nombre-usuario').title = 'Toca para cambiar tu nombre';
+document.getElementById('nombre-usuario').addEventListener('click', renderBienvenidaNombre);
 console.log('🎉 Plataforma de minijuegos — cargada');
+
+// 👇 Conectar el chat en directo con Supabase
+inicializarChat();
