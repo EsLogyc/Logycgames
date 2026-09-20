@@ -52,13 +52,13 @@ function crearPartidaPasapalabra() {
 // FASE 1: INTRODUCCIÓN
 // ----------------------------------------------------------------
 function renderIntroPasapalabra() {
-    setTituloJuego('Pasapalabra — Rosco cooperativo');
+    setTituloJuego('Definiciones — Rosco cooperativo');
     actualizarPanelJugadores([], -1);
 
     renderVista(`
         <div class="pantalla-juego">
             <button class="btn-volver" id="btn-volver-selector-pp">← Volver a minijuegos</button>
-            <h2>🔤 Pasapalabra</h2>
+            <h2>🔤 Definiciones</h2>
             <p class="subtexto">Todo el grupo juega en equipo contra el mismo rosco. Alguien lee las definiciones en voz alta y decidís juntos si acertáis.</p>
             <div class="tarjeta-central">
                 <p style="margin-bottom:10px;">⏱️ Tenéis <strong>${TIEMPO_ROSCO_SEGUNDOS / 60} minutos</strong> para completar las 26 letras.</p>
@@ -77,7 +77,7 @@ function renderIntroPasapalabra() {
 // ----------------------------------------------------------------
 function empezarRosco() {
     partidaPasapalabra.fase = 'jugando';
-    logEvento('🔤 Empieza el rosco del Pasapalabra en equipo.');
+    logEvento('🔤 Empieza el rosco de Definiciones en equipo.');
     partidaPasapalabra.temporizadorId = setInterval(tickTemporizadorRosco, 1000);
     renderRoscoGrid();
 }
@@ -207,7 +207,7 @@ function finalizarRosco() {
     const sinResponder = partidaPasapalabra.estados.filter(e => e === 'pendiente' || e === 'pasada').length;
     const roscoCompleto = aciertos === ROSCO_PASAPALABRA.length;
 
-    setTituloJuego('Pasapalabra — Resultado');
+    setTituloJuego('Definiciones — Resultado');
     renderVista(`
         <div class="pantalla-juego">
             <div class="tarjeta-central">
@@ -218,16 +218,20 @@ function finalizarRosco() {
                     <span>⏳ <strong>${sinResponder}</strong></span>
                 </div>
             </div>
-            <div style="display:flex; gap:10px; justify-content:center;">
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn-secundario" id="btn-compartir-rosco">📤 Compartir resultado</button>
                 <button class="btn-secundario" id="btn-otro-rosco">Jugar otro rosco</button>
                 <button class="btn-principal" id="btn-volver-menu-pp">Volver al menú</button>
             </div>
         </div>
     `);
 
-    logEvento(`🏁 Pasapalabra terminado: ${aciertos} aciertos, ${fallos} fallos.`);
+    logEvento(`🏁 Definiciones terminado: ${aciertos} aciertos, ${fallos} fallos.`);
     registrarPartidaCompletada();
 
+    document.getElementById('btn-compartir-rosco').addEventListener('click', () => {
+        compartirResultado(`🔤 ¡${aciertos}/${ROSCO_PASAPALABRA.length} en Definiciones${roscoCompleto ? ', rosco perfecto!' : '!'} ¿Te atreves a superarlo?`);
+    });
     document.getElementById('btn-otro-rosco').addEventListener('click', crearPartidaPasapalabra);
     document.getElementById('btn-volver-menu-pp').addEventListener('click', mostrarSelectorJuegos);
 }

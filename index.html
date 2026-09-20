@@ -22,7 +22,8 @@
             <div id="titulo-juego-actual">Elige un minijuego</div>
 
            <div class="header-actions">
-                <a href="https://paypal.me/judithpm" target="_blank" rel="noopener" class="btn-donacion" id="btn-donacion" title="Invítanos a un café">☕</a>
+                <a href="https://paypal.me/judithpm" target="_blank" rel="noopener" class="btn-donacion" id="btn-donacion-paypal" title="Donar con PayPal">💙</a>
+                <a href="https://ko-fi.com/logyc" target="_blank" rel="noopener" class="btn-donacion" id="btn-donacion-kofi" title="Invítanos a un café en Ko-fi">☕</a>
                 <span class="usuario" id="nombre-usuario">👤 Anfitrión</span>
                 <button id="toggle-chat-btn" aria-label="Mostrar/ocultar registro">📜</button>
             </div>
@@ -34,13 +35,17 @@
                 <div class="avatar-anillo" id="avatar-anillo" style="--pct:0;">
                     <div class="avatar-inner" id="avatar-inner">🎉</div>
                 </div>
-                <div class="nombre">Sesión de fiesta</div>
+                <div class="nombre" id="nombre-sesion">Sesión de fiesta</div>
                 <div class="rango" id="rango-sesion">🔰 Recién empezada</div>
             </div>
             <div class="progreso">
                 <div class="label">🏆 Progreso de desbloqueos</div>
                 <div class="barra"><div class="relleno" id="barra-progreso" style="width:0%;"></div></div>
                 <div class="detalle"><span id="detalle-progreso">0 / 10 partidas</span><span id="detalle-porcentaje">0%</span></div>
+            </div>
+            <div class="ultimo-juego" id="bloque-ultimo-juego" style="display:none;">
+                <div class="label">🕹️ Última partida</div>
+                <div id="texto-ultimo-juego"></div>
             </div>
             <div class="jugadores-panel">
                 <div class="label">👥 Jugadores en partida</div>
@@ -75,7 +80,7 @@
         <div id="mobile-left-panel">
             <div class="panel-content">
                 <button class="cerrar-panel" id="cerrar-panel-movil">✕</button>
-                <div class="perfil"><div class="avatar-anillo" id="avatar-anillo-movil" style="--pct:0;"><div class="avatar-inner" id="avatar-inner-movil">🎉</div></div><div class="nombre">Sesión de fiesta</div><div class="rango" id="rango-sesion-movil">🔰 Recién empezada</div></div>
+                <div class="perfil"><div class="avatar-anillo" id="avatar-anillo-movil" style="--pct:0;"><div class="avatar-inner" id="avatar-inner-movil">🎉</div></div><div class="nombre" id="nombre-sesion-movil">Sesión de fiesta</div><div class="rango" id="rango-sesion-movil">🔰 Recién empezada</div></div>
                 <div class="progreso"><div class="label">🏆 Progreso</div><div class="barra"><div class="relleno" id="barra-progreso-movil" style="width:0%;"></div></div><div class="detalle"><span id="detalle-progreso-movil">0 / 10 partidas</span><span id="detalle-porcentaje-movil">0%</span></div></div>
                 <div class="jugadores-panel"><div class="label">👥 Jugadores</div><div id="lista-jugadores-panel-movil"><span class="vacio">Sin partida activa</span></div></div>
             </div>

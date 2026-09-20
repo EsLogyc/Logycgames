@@ -34,11 +34,28 @@ function logEvento(texto) {
 }
 
 // ================================================================
+// COMPARTIR RESULTADO EN REDES / WHATSAPP
+// ================================================================
+function compartirResultado(texto) {
+    const url = window.location.href;
+    if (navigator.share) {
+        navigator.share({ title: 'Minijuegos de fiesta', text: texto, url }).catch(() => { /* cancelado por el usuario, no pasa nada */ });
+    } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(`${texto} ${url}`)
+            .then(() => logEvento('📋 Resultado copiado. Pégalo donde quieras compartirlo.'))
+            .catch(() => logEvento('⚠️ No se pudo copiar el resultado.'));
+    } else {
+        logEvento('⚠️ Compartir no está disponible en este navegador.');
+    }
+}
+
+// ================================================================
 // SELECTOR DE MINIJUEGOS (pantalla inicial)
 // ================================================================
 function mostrarSelectorJuegos() {
     setTituloJuego('Elige un minijuego');
     actualizarPanelJugadores([], -1);
+    aplicarPersonalizacionPanel();
 
     const tarjetas = CATALOGO_JUEGOS.map(juego => `
         <div class="juego-card ${juego.disponible ? '' : 'proximamente'}" data-id="${juego.id}">
@@ -64,6 +81,7 @@ function mostrarSelectorJuegos() {
             const id = card.dataset.id;
             const juego = CATALOGO_JUEGOS.find(j => j.id === id);
             if (!juego.disponible) return;
+            registrarUltimoJuego(juego.nombre);
             if (id === 'impostor') {
                 crearPartidaImpostor();
             } else if (id === 'ahorcado') {
@@ -122,6 +140,58 @@ function guardarJugadoresGuardados(lista) {
         const limpios = lista.map(n => n.trim()).filter(n => n !== '');
         if (limpios.length > 0) localStorage.setItem(CLAVE_JUGADORES, JSON.stringify(limpios));
     } catch (e) { /* almacenamiento no disponible, seguimos sin persistencia */ }
+}
+
+// ================================================================
+// PERSONALIZACIÓN DEL PANEL: SALUDO Y ÚLTIMA PARTIDA
+// ================================================================
+const CLAVE_ULTIMO_JUEGO = 'fiesta_ultimo_juego';
+
+function registrarUltimoJuego(nombreJuego) {
+    try {
+        localStorage.setItem(CLAVE_ULTIMO_JUEGO, JSON.stringify({ nombre: nombreJuego, fecha: Date.now() }));
+    } catch (e) { /* almacenamiento no disponible */ }
+}
+
+function formatearFechaRelativa(timestamp) {
+    const ahora = Date.now();
+    const diffMs = ahora - timestamp;
+    const diffMin = Math.floor(diffMs / 60000);
+    const diffHoras = Math.floor(diffMin / 60);
+    const diffDias = Math.floor(diffHoras / 24);
+
+    if (diffMin < 5) return 'hace un momento';
+    if (diffMin < 60) return `hace ${diffMin} min`;
+    if (diffHoras < 24) return `hace ${diffHoras}h`;
+    if (diffDias === 1) return 'ayer';
+    if (diffDias < 7) return `hace ${diffDias} días`;
+    return new Date(timestamp).toLocaleDateString('es-ES');
+}
+
+function aplicarPersonalizacionPanel() {
+    const jugadoresGuardados = cargarJugadoresGuardados();
+    const nombreEl = document.getElementById('nombre-sesion');
+    const nombreMovilEl = document.getElementById('nombre-sesion-movil');
+    const saludo = jugadoresGuardados ? `¡Hola, ${jugadoresGuardados[0]}!` : 'Sesión de fiesta';
+    if (nombreEl) nombreEl.textContent = saludo;
+    if (nombreMovilEl) nombreMovilEl.textContent = saludo;
+    const usuarioEl = document.getElementById('nombre-usuario');
+    if (usuarioEl) {
+        usuarioEl.textContent = jugadoresGuardados ? `👤 ${jugadoresGuardados[0]}` : '👤 Anfitrión';
+    }
+
+    const bloqueUltimo = document.getElementById('bloque-ultimo-juego');
+    const textoUltimo = document.getElementById('texto-ultimo-juego');
+    if (bloqueUltimo && textoUltimo) {
+        try {
+            const datos = localStorage.getItem(CLAVE_ULTIMO_JUEGO);
+            if (datos) {
+                const { nombre, fecha } = JSON.parse(datos);
+                textoUltimo.textContent = `${nombre} · ${formatearFechaRelativa(fecha)}`;
+                bloqueUltimo.style.display = 'block';
+            }
+        } catch (e) { /* sin datos, se queda oculto */ }
+    }
 }
 
 // ================================================================
@@ -250,5 +320,6 @@ panelOverlay.addEventListener('click', cerrarPanelMovilFn);
 // INICIO
 // ================================================================
 aplicarProgresoUI(cargarProgreso());
+aplicarPersonalizacionPanel();
 mostrarSelectorJuegos();
 console.log('🎉 Plataforma de minijuegos — cargada');

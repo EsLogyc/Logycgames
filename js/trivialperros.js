@@ -65,7 +65,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- Border Collie ---
     {
         pregunta: '¿Qué raza es conocida por ser muy inteligente?',
-       // imagen: 'img/perros/bordercollie.jpg',
+        imagen: 'img/perros/bordercollie.jpg',
         opciones: ['Border Collie', 'Pastor Alemán', 'Beagle', 'Doberman'],
         correcta: 0
     },
@@ -105,7 +105,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- San Bernardo ---
     {
         pregunta: '¿Qué raza es famosa por su gran tamaño?',
-       // imagen: 'img/perros/sanbernardo.jpg',
+        imagen: 'img/perros/sanbernardo.jpg',
         opciones: ['San Bernardo', 'Mastín', 'Gran Danés', 'Terranova'],
         correcta: 0
     },
@@ -145,7 +145,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- Husky ---
     {
         pregunta: '¿Qué raza es conocida por tirar de trineos?',
-        //imagen: 'img/perros/husky.jpg',
+        imagen: 'img/perros/husky.jpg',
         opciones: ['Husky Siberiano', 'Malamute', 'Samoyedo', 'Pastor de Groenlandia'],
         correcta: 0
     },
@@ -185,7 +185,7 @@ const PREGUNTAS_TRIVIAL_PERROS = [
     // --- Caniche ---
     {
         pregunta: '¿Qué raza es famosa por su elegancia?',
-        //imagen: 'img/perros/caniche.jpg',
+        imagen: 'img/perros/caniche.jpg',
         opciones: ['Caniche', 'Bichón Frisé', 'Shih Tzu', 'Pomerania'],
         correcta: 0
     },
@@ -433,7 +433,8 @@ function mostrarResultadoTrivialPerros() {
                 </div>
             </div>
 
-            <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
+                <button class="btn-secundario" id="btn-compartir-trivial-perros">📤 Compartir resultado</button>
                 <button class="btn-secundario" id="btn-otra-trivial-perros">Jugar otra ronda</button>
                 <button class="btn-principal" id="btn-volver-menu-trivial-perros">Volver al menú</button>
             </div>
@@ -442,6 +443,10 @@ function mostrarResultadoTrivialPerros() {
 
     logEvento(`🏁 Trivial de Perros terminado. Gana ${ganador[0]} con ${ganador[1]} puntos.`);
     registrarPartidaCompletada();
+
+    document.getElementById('btn-compartir-trivial-perros').addEventListener('click', () => {
+        compartirResultado(`🐶 ¡${ganador[0]} ganó el Trivial de Perros con ${ganador[1]} puntos! ¿Te atreves a superarlo?`);
+    });
 
     // Botón: jugar otra ronda
     document.getElementById('btn-otra-trivial-perros').addEventListener('click', () => {

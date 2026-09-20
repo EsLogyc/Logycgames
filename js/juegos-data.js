@@ -4,8 +4,8 @@
 const CATALOGO_JUEGOS = [
     { id: 'impostor', nombre: 'Impostor de palabra', icono: '🎭', descripcion: 'Todos tienen la misma palabra menos uno. Descubre quién miente.', disponible: true },
     { id: 'ahorcado', nombre: 'Ahorcado', icono: '🎯', descripcion: 'Escribe una palabra y que el resto la adivine letra a letra.', disponible: true },
-    { id: 'trivial', nombre: 'Trivial Streamers', icono: '❓', descripcion: 'Preguntas de gaming y cultura streamer por turnos.', disponible: true },
-    { id: 'pasapalabra', nombre: 'Pasapalabra', icono: '🔤', descripcion: 'El rosco de siempre, en equipo y contrarreloj.', disponible: true },
+    { id: 'trivial', nombre: 'Trivial de Streamers', icono: '❓', descripcion: 'Preguntas de gaming y cultura streamer por turnos.', disponible: true },
+    { id: 'pasapalabra', nombre: 'Definiciones', icono: '🔤', descripcion: 'El rosco de siempre, en equipo y contrarreloj.', disponible: true },
     { id: 'trivialperros', nombre: 'Trivial de Perros', icono: '🐶', descripcion: 'Adivina razas de perros por su foto y sus características.', disponible: true },
     { id: 'quiensoy', nombre: '¿Quién soy?', icono: '🎭', descripcion: 'Piensa un personaje libre y que el otro lo adivine con preguntas de sí o no.', disponible: true }
 ];

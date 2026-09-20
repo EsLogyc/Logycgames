@@ -54,7 +54,7 @@ function crearPartidaTrivial() {
 // FASE 1: CONFIGURACIÓN
 // ----------------------------------------------------------------
 function renderConfiguracionTrivial() {
-    setTituloJuego('Trivial Streamers — Configuración');
+    setTituloJuego('Trivial de Streamers — Configuración');
     if (partidaTrivial.jugadores.length === 0) {
         partidaTrivial.jugadores = cargarJugadoresGuardados() || ['Jugador 1', 'Jugador 2'];
     }
@@ -69,7 +69,7 @@ function renderConfiguracionTrivial() {
     renderVista(`
         <div class="pantalla-juego">
             <button class="btn-volver" id="btn-volver-selector-triv">← Volver a minijuegos</button>
-            <h2>❓ Trivial Streamers</h2>
+            <h2>❓ Trivial de Streamers</h2>
             <p class="subtexto">Preguntas de dificultad media sobre grandes streamers hispanos. Os turnáis para responder.</p>
             <div class="tarjeta-central">
                 <div class="lista-nombres" id="lista-nombres-trivial">${filas}</div>
@@ -124,7 +124,7 @@ function renderConfiguracionTrivial() {
 // FASE 2: PREGUNTAS POR TURNOS
 // ----------------------------------------------------------------
 function renderPreguntaTrivial() {
-    setTituloJuego(`Trivial Streamers — Pregunta ${partidaTrivial.preguntaIndex + 1}/${NUM_PREGUNTAS_TRIVIAL}`);
+    setTituloJuego(`Trivial de Streamers — Pregunta ${partidaTrivial.preguntaIndex + 1}/${NUM_PREGUNTAS_TRIVIAL}`);
     const jugadorActual = partidaTrivial.jugadores[partidaTrivial.turnoIndex];
     const pregOriginal = PREGUNTAS_TRIVIAL[partidaTrivial.preguntasOrden[partidaTrivial.preguntaIndex]];
     const preg = mezclarOpcionesPregunta(pregOriginal);
@@ -191,7 +191,7 @@ function resolverRespuestaTrivial(idxElegido, preg, jugadorActual) {
 // FASE 3: RESULTADO FINAL
 // ----------------------------------------------------------------
 function mostrarResultadoTrivial() {
-    setTituloJuego('Trivial Streamers — Resultado');
+    setTituloJuego('Trivial de Streamers — Resultado');
     const ranking = Object.entries(partidaTrivial.puntuaciones).sort((a, b) => b[1] - a[1]);
     const ganador = ranking[0];
 
@@ -207,7 +207,8 @@ function mostrarResultadoTrivial() {
                 <div class="veredicto">🏆 ¡${ganador[0]} gana el Trivial!</div>
                 <div style="margin-top:14px; text-align:left; max-width:280px; margin-left:auto; margin-right:auto;">${filasRanking}</div>
             </div>
-            <div style="display:flex; gap:10px; justify-content:center;">
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn-secundario" id="btn-compartir-trivial">📤 Compartir resultado</button>
                 <button class="btn-secundario" id="btn-otra-trivial">Jugar otra ronda</button>
                 <button class="btn-principal" id="btn-volver-menu-trivial">Volver al menú</button>
             </div>
@@ -217,6 +218,9 @@ function mostrarResultadoTrivial() {
     logEvento(`🏁 Trivial terminado. Gana ${ganador[0]} con ${ganador[1]} puntos.`);
     registrarPartidaCompletada();
 
+    document.getElementById('btn-compartir-trivial').addEventListener('click', () => {
+        compartirResultado(`🏆 ¡${ganador[0]} ganó el Trivial de Streamers con ${ganador[1]} puntos! ¿Te atreves a superarlo?`);
+    });
     document.getElementById('btn-otra-trivial').addEventListener('click', () => {
         const jugadoresAnteriores = partidaTrivial.jugadores;
         crearPartidaTrivial();
