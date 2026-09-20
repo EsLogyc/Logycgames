@@ -367,8 +367,20 @@ toggleLeftBtn.addEventListener('click', function () {
 });
 
 toggleChatBtn.addEventListener('click', function () {
-    columnaDerecha.classList.toggle('hidden-chat');
-    this.classList.toggle('chat-oculto', columnaDerecha.classList.contains('hidden-chat'));
+    const esMovil = window.matchMedia('(max-width: 820px)').matches;
+
+    if (esMovil) {
+        const overlay = document.getElementById('right-panel-overlay');
+        const abierto = columnaDerecha.classList.toggle('open-movil');
+        overlay.classList.toggle('open', abierto);
+        if (abierto) {
+            const cont = document.getElementById('chat-mensajes');
+            if (cont) setTimeout(() => cont.scrollTop = cont.scrollHeight, 300);
+        }
+    } else {
+        columnaDerecha.classList.toggle('hidden-chat');
+        this.classList.toggle('chat-oculto', columnaDerecha.classList.contains('hidden-chat'));
+    }
 });
 
 menuToggle.addEventListener('click', function () {

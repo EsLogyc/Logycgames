@@ -92,6 +92,15 @@
     </div>
 
     <!-- 1) SDK de Supabase SIEMPRE el primero -->
+         <!-- OVERLAY DEL PANEL DERECHO (móvil) -->
+    <div id="right-panel-overlay"></div>
+
+    <!-- CHAT FLOTANTE (móvil) -->
+    <div id="chat-flotante-movil">
+        <span class="icono-chat" id="chat-flotante-expandir" title="Ver historial completo">📜</span>
+        <input type="text" id="chat-flotante-input" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
+        <button id="chat-flotante-enviar" aria-label="Enviar">➤</button>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- 2) Tus juegos -->
