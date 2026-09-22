@@ -412,12 +412,12 @@ aplicarPersonalizacionPanel();
 if (cargarJugadoresGuardados()) {
     mostrarSelectorJuegos();
 } else {
-    renderBienvenidaNombre();
+    iniciarTestNombreFiesta();
 }
 
 document.getElementById('nombre-usuario').style.cursor = 'pointer';
 document.getElementById('nombre-usuario').title = 'Toca para cambiar tu nombre';
-document.getElementById('nombre-usuario').addEventListener('click', renderBienvenidaNombre);
+document.getElementById('nombre-usuario').addEventListener('click', abrirMenuNombre);
 console.log('🎉 Plataforma de minijuegos — cargada');
 
 // 👇 Conectar el chat en directo con Supabase

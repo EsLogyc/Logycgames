@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
     <title>Fiesta • Plataforma de Minijuegos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fponsxnvrynnshekiptw.supabase.co" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
 
@@ -144,25 +147,26 @@
     <!-- SCRIPTS: el orden importa                                 -->
     <!-- ============================================================ -->
 
-    <!-- 1) SDK de Supabase — SIEMPRE primero -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <!-- 1) SDK de Supabase -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- 2) Datos y juegos -->
-    <script src="js/juegos-data.js"></script>
-    <script src="js/impostor.js"></script>
-    <script src="js/ahorcado.js"></script>
-    <script src="js/trivial.js"></script>
-    <script src="js/pasapalabra.js"></script>
-    <script src="js/trivialperros.js"></script>
-    <script src="js/quiensoy.js"></script>
-    <script src="js/codigo.js"></script>
+    <script defer src="js/juegos-data.js"></script>
+    <script defer src="js/impostor.js"></script>
+    <script defer src="js/ahorcado.js"></script>
+    <script defer src="js/trivial.js"></script>
+    <script defer src="js/pasapalabra.js"></script>
+    <script defer src="js/trivialperros.js"></script>
+    <script defer src="js/quiensoy.js"></script>
+    <script defer src="js/codigo.js"></script>
 
-    <!-- 3) Chat y ranking (usan Supabase) -->
-    <script src="js/chat.js"></script>
-    <script src="js/ranking.js"></script>
+    <!-- 3) Chat y ranking -->
+    <script defer src="js/chat.js"></script>
+    <script defer src="js/ranking.js"></script>
+    <script defer src="js/nombres-fiesta.js"></script> 
 
-    <!-- 4) main.js SIEMPRE EL ÚLTIMO -->
-    <script src="js/main.js"></script>
+    <!-- 4) main.js SIEMPRE el último -->
+    <script defer src="js/main.js"></script>
 
     <!-- 5) Registro del Service Worker (PWA) -->
     <script>

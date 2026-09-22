@@ -2,7 +2,7 @@
 // SERVICE WORKER — Fiesta
 // v2: añadido ranking.js, cacheo individual tolerante a fallos
 // ================================================================
-const CACHE_NOMBRE = 'fiesta-cache-v2';
+const CACHE_NOMBRE = 'fiesta-cache-v3';
 
 const ARCHIVOS_ESENCIALES = [
     './',
@@ -20,6 +20,7 @@ const ARCHIVOS_ESENCIALES = [
     './js/chat.js',
     './js/ranking.js',
     './js/main.js',
+    './js/nombres-fiesta.js',
     './img/iconos/icono-192.png',
     './img/iconos/icono-512.png'
 ];

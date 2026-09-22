@@ -1446,3 +1446,121 @@ html, body {
     }
     .categorias button:not(.active):not(.premium) { display: inline-block; }
 }
+/* ================================================================
+   TEST DEL NOMBRE DE FIESTA
+   ================================================================ */
+
+.tarjeta-intro-test,
+.tarjeta-resultado-test {
+    text-align: center;
+    padding: 32px 24px;
+}
+
+.emoji-grande-test {
+    font-size: 3.4rem;
+    line-height: 1;
+    margin-bottom: 12px;
+    animation: flotar 3s ease-in-out infinite;
+}
+
+@keyframes flotar {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* Progreso del test */
+.progreso-test {
+    max-width: 400px;
+    margin: 0 auto 16px;
+    text-align: center;
+}
+.progreso-test-texto {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.progreso-test-barra {
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.progreso-test-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-dark));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Pregunta */
+.tarjeta-pregunta-test {
+    padding: 32px 24px;
+}
+.texto-pregunta-test {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 22px;
+    line-height: 1.4;
+}
+.opciones-test {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 320px;
+    margin: 0 auto;
+}
+.btn-opcion-test {
+    padding: 14px 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font);
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-opcion-test:hover {
+    border-color: var(--gold);
+    background: rgba(212, 168, 67, 0.08);
+    transform: translateY(-1px);
+}
+.btn-opcion-test:active {
+    transform: translateY(0);
+}
+
+/* Resultado */
+.nombre-final-test {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+    letter-spacing: -0.5px;
+    margin: 16px 0 26px;
+    padding: 0 10px;
+    line-height: 1.2;
+    animation: aparecer 0.5s ease-out;
+    word-wrap: break-word;
+}
+
+@keyframes aparecer {
+    0%   { opacity: 0; transform: scale(0.85) translateY(10px); }
+    60%  { opacity: 1; transform: scale(1.05) translateY(0); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.botones-resultado-test {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+@media (max-width: 480px) {
+    .nombre-final-test { font-size: 1.6rem; }
+    .emoji-grande-test { font-size: 2.6rem; }
+    .texto-pregunta-test { font-size: 1rem; }
+}
