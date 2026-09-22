@@ -362,8 +362,17 @@ const panelOverlay = document.getElementById('panel-overlay');
 const cerrarPanelMovil = document.getElementById('cerrar-panel-movil');
 
 toggleLeftBtn.addEventListener('click', function () {
-    columnaIzquierda.classList.toggle('hidden-left');
-    this.classList.toggle('panel-oculto', columnaIzquierda.classList.contains('hidden-left'));
+    const esMovil = window.matchMedia('(max-width: 820px)').matches;
+
+    if (esMovil) {
+        // En móvil: abrimos el panel lateral izquierdo
+        mobilePanel.classList.toggle('open');
+        panelOverlay.classList.toggle('open');
+    } else {
+        // En escritorio: comportamiento clásico
+        columnaIzquierda.classList.toggle('hidden-left');
+        this.classList.toggle('panel-oculto', columnaIzquierda.classList.contains('hidden-left'));
+    }
 });
 
 toggleChatBtn.addEventListener('click', function () {
