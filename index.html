@@ -6,6 +6,15 @@
     <title>Fiesta • Plataforma de Minijuegos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#d4a843" />
+    <link rel="icon" href="img/iconos/icono-192.png" />
+    <link rel="apple-touch-icon" href="img/iconos/icono-192.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Fiesta" />
 </head>
 <body>
 
@@ -21,7 +30,7 @@
 
             <div id="titulo-juego-actual">Elige un minijuego</div>
 
-           <div class="header-actions">
+            <div class="header-actions">
                 <a href="https://paypal.me/judithpm" target="_blank" rel="noopener" class="btn-donacion" id="btn-donacion-paypal" title="Donar con PayPal">💙</a>
                 <a href="https://ko-fi.com/logyc" target="_blank" rel="noopener" class="btn-donacion" id="btn-donacion-kofi" title="Invítanos a un café en Ko-fi">☕</a>
                 <span class="usuario" id="nombre-usuario">👤 Anfitrión</span>
@@ -29,7 +38,7 @@
             </div>
         </header>
 
-        <!-- COLUMNA IZQUIERDA: ESTADO DE LA PARTIDA -->
+        <!-- COLUMNA IZQUIERDA -->
         <aside id="columna-izquierda">
             <div class="perfil">
                 <div class="avatar-anillo" id="avatar-anillo" style="--pct:0;">
@@ -41,6 +50,18 @@
             <div class="progreso">
                 <div class="label">📊 Estadísticas</div>
                 <div class="detalle"><span id="detalle-progreso">🎮 0 jugadas</span><span id="detalle-porcentaje">🏆 0 ganadas</span></div>
+            </div>
+            <div class="ranking" id="bloque-ranking">
+                <div class="label">🏆 Salón de la Fama</div>
+                <div style="font-size:0.72rem; color:var(--text-secondary); margin:8px 0 4px; font-weight:600;">🎮 Retos superados</div>
+                <div id="ranking-retos"></div>
+                <div style="font-size:0.72rem; color:var(--text-secondary); margin:12px 0 4px; font-weight:600;">🎓 Aciertos totales</div>
+                <div id="ranking-aciertos"></div>
+                <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color); font-size:0.78rem;">
+                    <span style="color:var(--text-secondary);">Tú:</span>
+                    <span id="mis-retos">🏆 0</span>
+                    <span id="mis-aciertos">🎓 0</span>
+                </div>
             </div>
             <div class="ultimo-juego" id="bloque-ultimo-juego" style="display:none;">
                 <div class="label">🕹️ Última partida</div>
@@ -56,54 +77,77 @@
             </div>
         </aside>
 
-        <!-- COLUMNA CENTRAL: AQUÍ VIVE EL JUEGO -->
+        <!-- COLUMNA CENTRAL -->
         <main id="columna-central">
-            <div id="vista-juego">
-                <!-- Contenido dinámico inyectado por JS: selector de juegos, configuración, reparto, votación, resultado -->
-            </div>
+            <div id="vista-juego"></div>
         </main>
 
-        <!-- COLUMNA DERECHA: LOG DE EVENTOS DE LA PARTIDA -->
+        <!-- COLUMNA DERECHA: CHAT -->
         <aside id="columna-derecha">
             <div id="chat-header">
-                <span class="titulo">📜 Registro de la partida</span>
+                <span class="titulo">💬 Chat global</span>
                 <span class="punto-activo" title="Sesión activa"></span>
             </div>
             <div id="chat-mensajes">
                 <div class="msg sistema">🎉 Bienvenido. Elige un minijuego para empezar.</div>
             </div>
+            <!-- ✅ IDs corregidos para coincidir con chat.js -->
             <div id="chat-input">
                 <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
-                <button id="chat-input-enviar" aria-label="Enviar">➤</button>
+                <button id="chat-input-enviar" aria-label="Enviar">📨</button>
             </div>
         </aside>
 
-        <!-- PANEL MÓVIL (estado de la partida) -->
+        <!-- OVERLAY DEL PANEL DERECHO (móvil) — FALTABA -->
+        <div id="right-panel-overlay"></div>
+
+        <!-- CHAT FLOTANTE MÓVIL — FALTABA -->
+        <div id="chat-flotante-movil">
+            <span class="icono-chat" id="chat-flotante-expandir" title="Ver historial completo">📜</span>
+            <input type="text" id="chat-flotante-input" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
+            <button id="chat-flotante-enviar" aria-label="Enviar">➤</button>
+        </div>
+
+        <!-- PANEL MÓVIL (izquierda) -->
         <div id="panel-overlay"></div>
         <div id="mobile-left-panel">
             <div class="panel-content">
                 <button class="cerrar-panel" id="cerrar-panel-movil">✕</button>
-                <div class="perfil"><div class="avatar-anillo" id="avatar-anillo-movil" style="--pct:0;"><div class="avatar-inner" id="avatar-inner-movil">🎉</div></div><div class="nombre" id="nombre-sesion-movil">Sesión de fiesta</div><div class="rango" id="rango-sesion-movil">🔰 Recién empezada</div></div>
-                <div class="progreso"><div class="label">📊 Estadísticas</div><div class="detalle"><span id="detalle-progreso-movil">🎮 0 jugadas</span><span id="detalle-porcentaje-movil">🏆 0 ganadas</span></div></div>
+                <div class="perfil">
+                    <div class="avatar-anillo" id="avatar-anillo-movil" style="--pct:0;"><div class="avatar-inner" id="avatar-inner-movil">🎉</div></div>
+                    <div class="nombre" id="nombre-sesion-movil">Sesión de fiesta</div>
+                    <div class="rango" id="rango-sesion-movil">🔰 Recién empezada</div>
+                </div>
+                <div class="progreso">
+                    <div class="label">📊 Estadísticas</div>
+                    <div class="detalle"><span id="detalle-progreso-movil">🎮 0 jugadas</span><span id="detalle-porcentaje-movil">🏆 0 ganadas</span></div>
+                </div>
+                <div class="ranking" id="bloque-ranking-movil">
+                    <div class="label">🏆 Salón de la Fama</div>
+                    <div style="font-size:0.72rem; color:var(--text-secondary); margin:8px 0 4px; font-weight:600;">🎮 Retos superados</div>
+                    <div id="ranking-retos-movil"></div>
+                    <div style="font-size:0.72rem; color:var(--text-secondary); margin:12px 0 4px; font-weight:600;">🎓 Aciertos totales</div>
+                    <div id="ranking-aciertos-movil"></div>
+                    <div style="display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid var(--border-color); font-size:0.78rem;">
+                        <span style="color:var(--text-secondary);">Tú:</span>
+                        <span id="mis-retos-movil">🏆 0</span>
+                        <span id="mis-aciertos-movil">🎓 0</span>
+                    </div>
+                </div>
                 <div class="jugadores-panel"><div class="label">👥 Jugadores</div><div id="lista-jugadores-panel-movil"><span class="vacio">Sin partida activa</span></div></div>
             </div>
         </div>
 
     </div>
 
-    <!-- 1) SDK de Supabase SIEMPRE el primero -->
-         <!-- OVERLAY DEL PANEL DERECHO (móvil) -->
-    <div id="right-panel-overlay"></div>
+    <!-- ============================================================ -->
+    <!-- SCRIPTS: el orden importa                                 -->
+    <!-- ============================================================ -->
 
-    <!-- CHAT FLOTANTE (móvil) -->
-    <div id="chat-flotante-movil">
-        <span class="icono-chat" id="chat-flotante-expandir" title="Ver historial completo">📜</span>
-        <input type="text" id="chat-flotante-input" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
-        <button id="chat-flotante-enviar" aria-label="Enviar">➤</button>
-    </div>
+    <!-- 1) SDK de Supabase — SIEMPRE primero -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- 2) Tus juegos -->
+    <!-- 2) Datos y juegos -->
     <script src="js/juegos-data.js"></script>
     <script src="js/impostor.js"></script>
     <script src="js/ahorcado.js"></script>
@@ -113,11 +157,22 @@
     <script src="js/quiensoy.js"></script>
     <script src="js/codigo.js"></script>
 
-    <!-- 3) El chat, DESPUÉS del SDK y ANTES de main.js -->
+    <!-- 3) Chat y ranking (usan Supabase) -->
     <script src="js/chat.js"></script>
+    <script src="js/ranking.js"></script>
 
-    <!-- 4) main.js el último, porque llama a inicializarChat() -->
+    <!-- 4) main.js SIEMPRE EL ÚLTIMO -->
     <script src="js/main.js"></script>
 
+    <!-- 5) Registro del Service Worker (PWA) -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.warn('No se pudo registrar el service worker:', err);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

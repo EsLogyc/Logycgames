@@ -207,7 +207,10 @@ function renderJuegoAhorcado() {
             partidaAhorcado.registrada = true;
             logEvento(ganaron ? '✅ El equipo ha ganado la partida de Ahorcado' : '💀 El equipo ha perdido esta ronda de Ahorcado');
             registrarPartidaCompletada();
-            if (ganaron) registrarVictoria();
+            if (ganaron) {
+                registrarVictoria();
+                sumarRetoSuperado();              // 👈 AÑADIDO
+            }
         }
         document.getElementById('btn-otra-ahorcado').addEventListener('click', crearPartidaAhorcado);
         document.getElementById('btn-volver-menu-ahorcado').addEventListener('click', mostrarSelectorJuegos);

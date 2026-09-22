@@ -1,0 +1,30 @@
+{
+  "id": "/fiesta/",
+  "name": "Fiesta · Plataforma de Minijuegos",
+  "short_name": "Fiesta",
+  "description": "Minijuegos de fiesta para jugar con amigos, sin instalación: Impostor, Ahorcado, Trivial, Definiciones, ¿Quién soy?, Adivina el Código y más.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1a2e",
+  "theme_color": "#d4a843",
+  "lang": "es",
+  "dir": "ltr",
+  "categories": ["games", "entertainment", "social"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "img/iconos/icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "img/iconos/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

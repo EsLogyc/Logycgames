@@ -422,3 +422,4 @@ console.log('🎉 Plataforma de minijuegos — cargada');
 
 // 👇 Conectar el chat en directo con Supabase
 inicializarChat();
+inicializarRanking();

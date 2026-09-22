@@ -375,6 +375,7 @@ function resolverRespuestaTrivialPerros(idxElegido, preg, jugadorActual) {
     if (acierto) {
         partidaTrivialPerros.puntuaciones[jugadorActual]++;
         logEvento(`🐾 ${jugadorActual} acierta: ${preg.opciones[preg.correcta]}`);
+        sumarAciertos(1);
     } else {
         logEvento(`❌ ${jugadorActual} falla. Era: ${preg.opciones[preg.correcta]}`);
     }

@@ -340,6 +340,7 @@ function comprobarCodigoUsuario() {
         const nombre = (cargarJugadoresGuardados() || ['Alguien'])[0];
         logEvento(`✅ ${nombre} ha descifrado el código: ${partidaCodigo.codigoSecreto.join('')}`);
         registrarPartidaCompletada();
+        sumarRetoSuperado();
         registrarVictoria();
 
         setTimeout(mostrarResultadoCodigo, 700);

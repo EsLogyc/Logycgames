@@ -228,6 +228,7 @@ function finalizarRosco() {
 
     logEvento(`🏁 Definiciones terminado: ${aciertos} aciertos, ${fallos} fallos.`);
     registrarPartidaCompletada();
+    if (aciertos > 0) sumarAciertos(aciertos);  
 
     document.getElementById('btn-compartir-rosco').addEventListener('click', () => {
         compartirResultado(`🔤 ¡${aciertos}/${ROSCO_PASAPALABRA.length} en Definiciones${roscoCompleto ? ', rosco perfecto!' : '!'} ¿Te atreves a superarlo?`);
