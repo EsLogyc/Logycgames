@@ -4,23 +4,91 @@
 
 // ================================================================
 // BANCO DE PERSONAJES ALEATORIOS (por si no se os ocurre nada)
+// Organizados por categorías para ampliar fácilmente.
 // ================================================================
 const BANCO_PERSONAJES_QUIENSOY = [
-    'Harry Potter', 'Shrek', 'Batman', 'Cleopatra', 'Albert Einstein', 'Mario Bros', 'Blancanieves',
-    'Sherlock Holmes', 'Frida Kahlo', 'Spider-Man', 'Elsa de Frozen', 'Pikachu', 'Don Quijote',
-    'Napoleón Bonaparte', 'Wonder Woman', 'Gandalf', 'La Sirenita', 'Charlie Chaplin', 'Buzz Lightyear',
-    'Cristóbal Colón', 'Homer Simpson', 'Drácula', 'Rapunzel', 'Iron Man', 'Leonardo da Vinci',
-    'Winnie the Pooh', 'Frankenstein', 'Aladino', 'Michael Jackson', 'SpongeBob', 'Julio César',
-    'La Cenicienta', 'El Joker', 'Pocahontas', 'Sonic', 'Marilyn Monroe', 'El Grinch', 'Thor',
-    'Mafalda', 'Peter Pan', 'Darth Vader', 'Hermione Granger', 'Van Gogh', 'Yoda', 'La Bella Durmiente',
-    'Popeye', 'Mozart', 'Woody de Toy Story', 'Hulk', 'Pinocho', 'Beethoven', 'Bob Esponja',
-    'El Papá Noel', 'Pedro Picapiedra', 'Michael Jordan', 'La Reina de Corazones', 'Robin Hood',
-    'Tarzán', 'Los Minions', 'El Ratoncito Pérez', 'La Mujer Maravilla',
-    'Un profesor de matemáticas', 'Un bombero', 'Un astronauta', 'Un pirata', 'Un vampiro',
-    'Un superhéroe inventado', 'Un extraterrestre', 'Un dinosaurio famoso', 'Un futbolista muy conocido',
-    'Un cantante famoso', 'Un rey medieval', 'Una bruja de cuento', 'Un mago', 'Un detective privado',
-    'Un vaquero del oeste', 'Un ninja', 'Un robot', 'Un zombi', 'Un fantasma', 'Un genio de la lámpara',
-    'Tu profesor favorito del colegio', 'Un influencer inventado'
+    // --- Superhéroes y villanos ---
+    'Batman', 'Superman', 'Spider-Man', 'Iron Man', 'Hulk', 'Thor', 'Capitán América',
+    'Wonder Woman', 'La Mujer Maravilla', 'Flash', 'Aquaman', 'Viuda Negra', 'Black Panther',
+    'Doctor Strange', 'Loki', 'Thanos', 'El Joker', 'El Pingüino', 'Magneto', 'Deadpool',
+    'Wolverine', 'Goku', 'Vegeta', 'Naruto', 'Luffy', 'Sailor Moon', 'Los Power Rangers',
+
+    // --- Disney y Pixar ---
+    'Mickey Mouse', 'Pato Donald', 'Goofy', 'Blancanieves', 'La Cenicienta', 'Rapunzel',
+    'La Bella Durmiente', 'La Sirenita', 'Ariel', 'Elsa de Frozen', 'Anna de Frozen',
+    'Olaf', 'Buzz Lightyear', 'Woody de Toy Story', 'Nemo', 'Dory', 'Simba', 'Timón',
+    'Pumba', 'Aladino', 'Jasmine', 'El Genio de la Lámpara', 'Pinocho', 'Peter Pan',
+    'Campanilla', 'Bambi', 'Dumbo', 'Mulan', 'Moana', 'Vaiana', 'Mirabel de Encanto',
+    'Winnie the Pooh', 'Tigger', 'Stitch', 'Lilo', 'Wall-E', 'Remy de Ratatouille',
+    'Bob Parr (Mr. Increíble)', 'Helen Parr (Elastigirl)', 'Miguel de Coco',
+
+    // --- Dibujos animados clásicos ---
+    'Homer Simpson', 'Marge Simpson', 'Bart Simpson', 'Lisa Simpson', 'Bob Esponja',
+    'Patricio Estrella', 'Calamardo', 'Arenita', 'Don Cangrejo', 'Pikachu', 'Ash Ketchum',
+    'Misty', 'Bugs Bunny', 'Pato Lucas', 'Tom y Jerry', 'Popeye', 'Scooby-Doo', 'Shaggy',
+    'Los Picapiedra', 'Pedro Picapiedra', 'Pablo Mármol', 'Los Supersónicos', 'He-Man',
+    'She-Ra', 'Los Minions', 'Gru', 'Mafalda', 'Mortadelo y Filemón', 'Zipi y Zape',
+    'Shin Chan', 'Doraemon', 'Nobita', 'Las Supernenas', 'Johnny Bravo', 'Rick Sanchez',
+    'Morty Smith', 'Eric Cartman', 'Kenny McCormick',
+
+    // --- Cine y televisión ---
+    'Darth Vader', 'Luke Skywalker', 'Yoda', 'Chewbacca', 'Han Solo', 'Leia Organa',
+    'Obi-Wan Kenobi', 'Kylo Ren', 'Indiana Jones', 'James Bond', 'Rocky Balboa',
+    'Terminator', 'Neo de Matrix', 'Morpheus', 'Trinity', 'Gandalf', 'Frodo Bolsón',
+    'Gollum', 'Aragorn', 'Legolas', 'Jack Sparrow', 'Harry Potter', 'Hermione Granger',
+    'Ron Weasley', 'Dumbledore', 'Voldemort', 'Hagrid', 'Severus Snape', 'Draco Malfoy',
+    'Edward Manos de Tijeras', 'Drácula', 'Frankenstein', 'El Hombre Lobo', 'La Momia',
+    'El Fantasma de la Ópera', 'Sherlock Holmes', 'Hércules Poirot', 'Miss Marple',
+    'Walter White', 'Jesse Pinkman', 'Eleven de Stranger Things', 'Michael Scofield',
+    'Sheldon Cooper', 'Los Simpsons',
+
+    // --- Ficción y fantasía ---
+    'Shrek', 'Fiona', 'Burro de Shrek', 'El Gato con Botas', 'Pinocho de Guillermo del Toro',
+    'Alicia en el País de las Maravillas', 'El Sombrerero Loco', 'La Reina de Corazones',
+    'El Grinch', 'Jack Skellington', 'Jack Skeleton', 'Los Cazafantasmas', 'E.T.',
+    'R2-D2', 'C-3PO', 'BB-8', 'Godzilla', 'King Kong', 'Los Teenage Mutant Ninja Turtles',
+
+    // --- Personajes históricos ---
+    'Cleopatra', 'Julio César', 'Napoleón Bonaparte', 'Leonardo da Vinci', 'Miguel Ángel',
+    'Albert Einstein', 'Isaac Newton', 'Marie Curie', 'Galileo Galilei', 'Mozart',
+    'Beethoven', 'Van Gogh', 'Frida Kahlo', 'Picasso', 'Dalí', 'Cristóbal Colón',
+    'Hernán Cortés', 'Marco Polo', 'Gandhi', 'Nelson Mandela', 'Martin Luther King',
+    'Juana de Arco', 'Isabel la Católica', 'Carlos I de España', 'Felipe II',
+    'Alejandro Magno', 'Ramsés II', 'Tutankamón',
+
+    // --- Deportistas ---
+    'Michael Jordan', 'Lionel Messi', 'Cristiano Ronaldo', 'Ronaldinho', 'Pelé',
+    'Maradona', 'Rafa Nadal', 'Roger Federer', 'Serena Williams', 'Usain Bolt',
+    'Michael Phelps', 'Kobe Bryant', 'LeBron James', 'Fernando Alonso', 'Carlos Sainz',
+    'Pau Gasol', 'Andrés Iniesta', 'Iker Casillas',
+
+    // --- Músicos y cantantes ---
+    'Michael Jackson', 'Madonna', 'Freddie Mercury', 'Elvis Presley', 'John Lennon',
+    'Paul McCartney', 'Bob Marley', 'David Bowie', 'Prince', 'Lady Gaga', 'Beyoncé',
+    'Taylor Swift', 'Rosalía', 'Bad Bunny', 'Shakira', 'Ricky Martin', 'Julio Iglesias',
+    'Enrique Iglesias', 'Alejandro Sanz', 'Pablo Alborán', 'Aitana', 'Karol G',
+
+    // --- Personajes famosos actuales ---
+    'Ibai Llanos', 'El Rubius', 'AuronPlay', 'TheGrefg', 'Wismichu', 'Vegetta777',
+    'Luzu', 'Mangel', 'Cristinini', 'Arigameplays', 'Rivers',
+
+    // --- Personajes de cuentos y fantasía ---
+    'Caperucita Roja', 'El Lobo Feroz', 'Los Tres Cerditos', 'Hansel y Gretel',
+    'Rumpelstiltskin', 'El Soldadito de Plomo', 'La Ratita Presumida', 'El Patito Feo',
+    'La Bella y la Bestia', 'Gastón', 'Alí Babá', 'Simbad el Marino', 'Robin Hood',
+    'Tarzán', 'Jane', 'Mowgli', 'El Rey León',
+
+    // --- Roles y arquetipos (para cuando no se os ocurra nada concreto) ---
+    'Un profesor de matemáticas', 'Una profesora de inglés', 'Un bombero', 'Un policía',
+    'Un médico', 'Una enfermera', 'Un astronauta', 'Un pirata', 'Un vampiro',
+    'Un superhéroe inventado', 'Un extraterrestre', 'Un dinosaurio famoso',
+    'Un futbolista muy conocido', 'Un cantante famoso', 'Un rey medieval',
+    'Una bruja de cuento', 'Un mago', 'Un detective privado', 'Un vaquero del oeste',
+    'Un ninja', 'Un samurái', 'Un robot', 'Un zombi', 'Un fantasma',
+    'Un genio de la lámpara', 'Un duende', 'Un hada', 'Un dragón',
+    'Tu profesor favorito del colegio', 'Un influencer inventado',
+    'Un youtuber famoso', 'Un streamer', 'Un chef con estrella Michelin',
+    'Un abogado de película', 'Un científico loco'
 ];
 
 function obtenerPersonajeAleatorioQuienSoy() {

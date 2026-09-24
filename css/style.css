@@ -359,7 +359,7 @@ html, body {
     border-left: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: auto;
     padding-top: var(--header-height);
     flex-shrink: 0;
     transition: margin-right var(--transition);
@@ -1001,7 +1001,13 @@ html, body {
     color: var(--text-primary);
 }
 .letra-rosco:hover { border-color: var(--gold); }
-.letra-rosco.acierto { background: var(--gold); border-color: var(--gold); color: #fff; cursor: default; }
+.letra-rosco.acierto {
+    background: var(--success);
+    border-color: var(--success);
+    color: #fff;
+    cursor: default;
+    box-shadow: 0 0 0 3px rgba(76, 175, 125, 0.2);
+}
 .letra-rosco.fallo { background: var(--danger); border-color: var(--danger); color: #fff; cursor: default; }
 .letra-rosco.pasada { background: var(--bg-body); border-color: var(--text-light); color: var(--text-light); }
 
@@ -1354,10 +1360,10 @@ html, body {
     /* Anulamos la regla de escritorio dentro del móvil */
     #columna-derecha.hidden-chat { margin-right: 0; }
 
-    /* Padding del input algo más ajustado en el panel móvil */
+    /* Padding del input algo más ajustado en el panel móvil 
     #columna-derecha #chat-input {
         padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
-    }
+    }*/
 
     /* Botones de móvil */
     #menu-toggle { display: none; }
@@ -1563,4 +1569,72 @@ html, body {
     .nombre-final-test { font-size: 1.6rem; }
     .emoji-grande-test { font-size: 2.6rem; }
     .texto-pregunta-test { font-size: 1rem; }
+}
+
+/* ================================================================
+   CHAT MÓVIL — solo se escribe dentro del panel abierto
+   ================================================================ */
+@media (max-width: 820px) {
+
+    #chat-flotante-movil {
+        display: none !important;
+    }
+
+    #columna-derecha #chat-input {
+        display: flex;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+
+    #columna-derecha #chat-mensajes {
+        padding-bottom: 12px;
+    }
+}
+
+/* ================================================================
+   ROSCO — Input para escribir la respuesta
+   ================================================================ */
+.zona-escribir-respuesta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 0 16px;
+}
+.input-respuesta-rosco {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 16px; /* evita el zoom en iOS */
+    font-family: var(--font);
+    text-align: center;
+    outline: none;
+    background: var(--bg-body);
+    color: var(--text-primary);
+    transition: var(--transition);
+}
+.input-respuesta-rosco:focus {
+    border-color: var(--gold);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(212, 168, 67, 0.15);
+}
+.input-respuesta-rosco:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.feedback-respuesta-rosco {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-height: 22px;
+    padding: 6px;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+.feedback-respuesta-rosco.acierto {
+    color: var(--success-dark);
+    background: rgba(76, 175, 125, 0.1);
+}
+.feedback-respuesta-rosco.fallo {
+    color: var(--danger-dark);
+    background: rgba(224, 82, 82, 0.08);
 }

@@ -279,7 +279,6 @@ function registrarPartidaCompletada() {
     const yaDesbloqueada = progreso.mejorasDesbloqueadas.includes(progreso.partidasJugadas);
     if (!yaDesbloqueada && progreso.partidasJugadas <= META_PARTIDAS) {
         progreso.mejorasDesbloqueadas.push(progreso.partidasJugadas);
-        logEvento(`🔓 ¡Nueva mejora desbloqueada! (partida ${progreso.partidasJugadas}/${META_PARTIDAS})`);
     }
 
     guardarProgreso(progreso);
