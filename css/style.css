@@ -1638,3 +1638,22 @@ html, body {
     color: var(--danger-dark);
     background: rgba(224, 82, 82, 0.08);
 }
+
+/* Logo clicable para volver al inicio */
+#btn-logo-home {
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 8px;
+    padding: 4px 8px;
+    margin-left: -8px; /* para que no se desplace visualmente */
+}
+#btn-logo-home:hover {
+    background: var(--border-color);
+}
+#btn-logo-home:active {
+    transform: scale(0.96);
+}
+#btn-logo-home:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+}

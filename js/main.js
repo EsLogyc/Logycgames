@@ -108,7 +108,7 @@ function renderBienvenidaNombre() {
 // SELECTOR DE MINIJUEGOS (pantalla inicial)
 // ================================================================
 function mostrarSelectorJuegos() {
-    setTituloJuego('Elige un minijuego');
+    setTituloJuego('');
     actualizarPanelJugadores([], -1);
     aplicarPersonalizacionPanel();
 
@@ -417,6 +417,27 @@ if (cargarJugadoresGuardados()) {
 document.getElementById('nombre-usuario').style.cursor = 'pointer';
 document.getElementById('nombre-usuario').title = 'Toca para cambiar tu nombre';
 document.getElementById('nombre-usuario').addEventListener('click', abrirMenuNombre);
+// Logo → volver al menú principal
+// Logo → volver al menú principal (y cerrar paneles si estamos en móvil)
+const logoHome = document.getElementById('btn-logo-home');
+if (logoHome) {
+    logoHome.addEventListener('click', () => {
+        // Cerrar panel derecho móvil si estuviera abierto
+        document.getElementById('columna-derecha').classList.remove('open-movil');
+        document.getElementById('right-panel-overlay').classList.remove('open');
+        // Cerrar panel izquierdo móvil si estuviera abierto
+        document.getElementById('mobile-left-panel').classList.remove('open');
+        document.getElementById('panel-overlay').classList.remove('open');
+        // Ir al menú
+        mostrarSelectorJuegos();
+    });
+    logoHome.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            mostrarSelectorJuegos();
+        }
+    });
+}
 console.log('🎉 Plataforma de minijuegos — cargada');
 
 // 👇 Conectar el chat en directo con Supabase
