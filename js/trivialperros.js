@@ -363,6 +363,7 @@ function renderPreguntaTrivialPerros() {
 
     document.querySelectorAll('#opciones-trivial-perros .opcion-voto').forEach(el => {
         el.addEventListener('click', () => {
+            el.blur();
             const idxElegido = parseInt(el.dataset.idx);
             resolverRespuestaTrivialPerros(idxElegido, preg, jugadorActual);
         });

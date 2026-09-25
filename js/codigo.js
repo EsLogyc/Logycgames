@@ -1,5 +1,5 @@
 // ================================================================
-// ADIVINA EL CÓDIGO — puzzle de lógica de 4 cifras, en solitario
+// ADIVINA EL CÓDIGO — con Reto del Día
 //  🔷 = correcto y en su sitio
 //  ▮  = correcto pero fuera de sitio
 //  (vacío) = ningún número coincide
@@ -7,46 +7,103 @@
 
 let partidaCodigo = null;
 
-// Las 5.040 combinaciones posibles de 4 cifras sin repetir, calculadas
-// UNA sola vez al cargar el archivo (antes se recalculaban en cada
-// intento de generar un puzzle, un trabajo repetido e innecesario).
-const TODAS_LAS_COMBINACIONES_CODIGO = (function generarTodasLasCombinaciones() {
-    const combinaciones = [];
-    function generar(actual, disponibles) {
-        if (actual.length === 4) {
-            combinaciones.push([...actual]);
-            return;
-        }
-        for (let i = 0; i < disponibles.length; i++) {
-            const nuevo = [...actual, disponibles[i]];
-            const restantes = [...disponibles.slice(0, i), ...disponibles.slice(i + 1)];
-            generar(nuevo, restantes);
-        }
-    }
-    generar([], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    return combinaciones;
-})();
+// ----------------------------------------------------------------
+// UTILIDADES DE SEMILLA (para el reto del día determinista)
+// ----------------------------------------------------------------
+function fechaHoyString() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${dia}`;
+}
 
-function crearPartidaCodigo() {
+// Generador pseudoaleatorio determinista (mulberry32 simplificado)
+function crearRandomConSemilla(semilla) {
+    let h = 0;
+    for (let i = 0; i < semilla.length; i++) {
+        h = Math.imul(31, h) + semilla.charCodeAt(i) | 0;
+    }
+    return function () {
+        h = Math.imul(h ^ (h >>> 15), h | 1);
+        h ^= h + Math.imul(h ^ (h >>> 7), h | 61);
+        return ((h ^ (h >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
+// ----------------------------------------------------------------
+// MENÚ DE ENTRADA (nuevo)
+// ----------------------------------------------------------------
+function crearMenuCodigo() {
+    setTituloJuego('Adivina el Código');
+    const fecha = fechaHoyString();
+    const fechaBonita = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long' });
+
+    renderVista(`
+        <div class="pantalla-juego">
+            <button class="btn-volver" id="btn-volver-menu-cod">← Volver a minijuegos</button>
+            <h2>🔢 Adivina el Código</h2>
+            <p class="subtexto">4 cifras sin repetir. Descubre el código único a partir de 5 pistas.</p>
+
+            <div class="tarjeta-central tarjeta-reto-dia">
+                <div class="icono-reto">🎯</div>
+                <h3 style="font-size:1.1rem; font-weight:800; margin-bottom:4px;">Reto del Día</h3>
+                <p class="subtexto" style="margin:0 0 6px;">${fechaBonita}</p>
+                <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:14px;">
+                    El mismo código para todo el mundo hoy. Si no entras, no pasa nada: mañana hay otro.
+                </p>
+                <button class="btn-principal" id="btn-reto-dia">Jugar el Reto del Día</button>
+            </div>
+
+            <div class="tarjeta-central">
+                <div class="icono-reto">🎲</div>
+                <h3 style="font-size:1rem; font-weight:800; margin-bottom:8px;">Código aleatorio</h3>
+                <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:14px;">
+                    Un código infinito para practicar todas las veces que quieras.
+                </p>
+                <button class="btn-secundario" id="btn-modo-aleatorio">Jugar modo libre</button>
+            </div>
+        </div>
+    `);
+
+    document.getElementById('btn-volver-menu-cod').onclick = mostrarSelectorJuegos;
+    document.getElementById('btn-reto-dia').addEventListener('click', () => crearPartidaCodigo('dia'));
+    document.getElementById('btn-modo-aleatorio').addEventListener('click', () => crearPartidaCodigo('aleatorio'));
+}
+
+// ----------------------------------------------------------------
+// CREAR PARTIDA
+// ----------------------------------------------------------------
+function crearPartidaCodigo(modo = 'aleatorio') {
+    const semilla = modo === 'dia'
+        ? 'juegacos-codigo-' + fechaHoyString()
+        : null;
+
     partidaCodigo = {
+        modo: modo,
+        semilla: semilla,
         codigoSecreto: [],
         filas: [],
         numerosTachados: new Set(),
-        juegoTerminado: false
+        juegoTerminado: false,
+        intentosUsados: 0
     };
-    generarCodigo();
-    generarFilas();
+
+    const rng = semilla ? crearRandomConSemilla(semilla) : Math.random;
+
+    generarCodigo(rng);
+    generarFilas(rng);
     renderTableroCodigo();
 }
 
 // ----------------------------------------------------------------
 // GENERACIÓN DEL CÓDIGO Y LAS PISTAS
 // ----------------------------------------------------------------
-function generarCodigo() {
+function generarCodigo(rng = Math.random) {
     const codigo = [];
     const usados = new Set();
     while (codigo.length < 4) {
-        const n = Math.floor(Math.random() * 10);
+        const n = Math.floor(rng() * 10);
         if (!usados.has(n)) {
             usados.add(n);
             codigo.push(n);
@@ -85,21 +142,16 @@ function evaluarIntentoCodigo(intento, solucion) {
     return barajarCodigo(simbolos);
 }
 
-function barajarCodigo(arr) {
+function barajarCodigo(arr, rng = Math.random) {
     const copia = [...arr];
     for (let i = copia.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(rng() * (i + 1));
         [copia[i], copia[j]] = [copia[j], copia[i]];
     }
     return copia;
 }
 
-// IMPORTANTE: aquí está la corrección clave. Cada fila se genera con un
-// orden fijo (candidato) y se evalúa EN ESE MISMO ORDEN, sin volver a
-// barajar los números después de calcular las pistas. Reordenar tras
-// evaluar era justo el fallo que hacía que la solución real no encajara
-// con las pistas mostradas.
-function generarFilas() {
+function generarFilas(rng = Math.random) {
     const MAX_INTENTOS = 300;
 
     for (let intentoGlobal = 0; intentoGlobal < MAX_INTENTOS; intentoGlobal++) {
@@ -111,7 +163,7 @@ function generarFilas() {
         for (let j = 0; j < 5; j++) {
             let intentoRow = null;
             for (let k = 0; k < 100; k++) {
-                const candidato = barajarCodigo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+                const candidato = barajarCodigo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], rng).slice(0, 4);
                 if (!clavesVistas.has(candidato.join(''))) {
                     intentoRow = candidato;
                     break;
@@ -130,14 +182,17 @@ function generarFilas() {
             partidaCodigo.filas = filas;
             return;
         }
-        generarCodigo();
+        // Si no hay solución única, regeneramos el código
+        generarCodigo(rng);
     }
 
-    // Fallback de seguridad (no debería ocurrir prácticamente nunca)
+    // Fallback de seguridad (no debería ocurrir)
+    console.warn('No se encontró puzzle único; usando uno por defecto.');
+    generarCodigo(rng);
     const codigoSecreto = partidaCodigo.codigoSecreto;
     const filas = [];
     for (let j = 0; j < 5; j++) {
-        const intentoRow = barajarCodigo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, 4);
+        const intentoRow = barajarCodigo([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], rng).slice(0, 4);
         const simbolos = evaluarIntentoCodigo(intentoRow, codigoSecreto);
         filas.push({ numeros: intentoRow, simbolos });
     }
@@ -145,8 +200,23 @@ function generarFilas() {
 }
 
 function verificarSolucionUnicaCodigo(filas, codigoSecreto) {
+    const todasLasCombinaciones = [];
+
+    function generarCombinaciones(actual, disponibles) {
+        if (actual.length === 4) {
+            todasLasCombinaciones.push([...actual]);
+            return;
+        }
+        for (let i = 0; i < disponibles.length; i++) {
+            const nuevo = [...actual, disponibles[i]];
+            const restantes = [...disponibles.slice(0, i), ...disponibles.slice(i + 1)];
+            generarCombinaciones(nuevo, restantes);
+        }
+    }
+    generarCombinaciones([], [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
     let soluciones = 0;
-    for (const combinacion of TODAS_LAS_COMBINACIONES_CODIGO) {
+    for (const combinacion of todasLasCombinaciones) {
         let cumpleTodas = true;
         for (const fila of filas) {
             const simbolos = evaluarIntentoCodigo(fila.numeros, combinacion);
@@ -191,21 +261,20 @@ function renderTableroCodigo() {
         `;
     }).join('');
 
-    const tecladoHtml = Array.from({ length: 10 }, (_, i) => i).map(n => {
-        const tachado = partidaCodigo.numerosTachados.has(n);
-        return `<div class="tecla-tachar ${tachado ? 'tachado' : ''}" data-num="${n}">${n}</div>`;
-    }).join('');
+    const etiquetaModo = partidaCodigo.modo === 'dia'
+        ? `<div class="etiqueta-reto-dia">🎯 Reto del Día · ${fechaHoyString().split('-').reverse().join('/')}</div>`
+        : '';
 
     renderVista(`
         <div class="pantalla-juego">
-            <button class="btn-volver" id="btn-volver-selector-codigo">← Volver a minijuegos</button>
+            <button class="btn-volver" id="btn-volver-selector-codigo">← Volver</button>
             <h2>🔢 Adivina el Código</h2>
-            <p class="subtexto">4 cifras sin repetir. 🔷 bien colocado · ▮ existe pero mal colocado · vacío, ninguno coincide. Solo hay una solución posible con estas 5 pistas.</p>
+            ${etiquetaModo}
+            <p class="subtexto">4 cifras sin repetir. 🔷 bien colocado · ▮ existe pero mal colocado · vacío, ninguno coincide.</p>
 
             <div class="tarjeta-central">
                 <div class="tablero-codigo">${filasHtml}</div>
-                <p class="subtexto" style="margin-top:14px;">✏️ Toca un número (en las filas o abajo) para tacharlo cuando lo descartes</p>
-                <div class="teclado-tachar" id="teclado-tachar-codigo">${tecladoHtml}</div>
+                <p class="subtexto" style="margin-top:14px;">✏️ Toca un número de las filas para tacharlo</p>
             </div>
 
             <div class="tarjeta-central">
@@ -224,7 +293,7 @@ function renderTableroCodigo() {
         </div>
     `);
 
-    document.getElementById('btn-volver-selector-codigo').onclick = mostrarSelectorJuegos;
+    document.getElementById('btn-volver-selector-codigo').onclick = crearMenuCodigo;
 
     function toggleTachar(num) {
         if (partidaCodigo.juegoTerminado) return;
@@ -232,11 +301,11 @@ function renderTableroCodigo() {
         else partidaCodigo.numerosTachados.add(num);
 
         document.querySelectorAll(
-            `.digito-codigo[data-num="${num}"], .tecla-tachar[data-num="${num}"]`
+            `.digito-codigo[data-num="${num}"]`
         ).forEach(el => el.classList.toggle('tachado'));
     }
 
-    document.querySelectorAll('.digito-codigo, .tecla-tachar').forEach(el => {
+    document.querySelectorAll('.digito-codigo').forEach(el => {
         el.addEventListener('click', () => toggleTachar(parseInt(el.dataset.num)));
     });
 
@@ -329,6 +398,9 @@ function comprobarCodigoUsuario() {
         return;
     }
 
+    // Contar intento válido
+    partidaCodigo.intentosUsados++;
+
     const esCorrecto = propuesta.every((d, i) => d === partidaCodigo.codigoSecreto[i]);
 
     if (esCorrecto) {
@@ -338,10 +410,9 @@ function comprobarCodigoUsuario() {
         mostrarMensajeCodigo('✅ ¡Código correcto!', 'acierto');
 
         const nombre = (cargarJugadoresGuardados() || ['Alguien'])[0];
-        logEvento(`✅ ${nombre} ha descifrado el código: ${partidaCodigo.codigoSecreto.join('')}`);
+        logEvento(`✅ ${nombre} ha descifrado el código en ${partidaCodigo.intentosUsados} intentos.`);
         registrarPartidaCompletada();
         sumarRetoSuperado();
-        registrarVictoria();
 
         setTimeout(mostrarResultadoCodigo, 700);
     } else {
@@ -356,6 +427,21 @@ function comprobarCodigoUsuario() {
 function mostrarResultadoCodigo() {
     setTituloJuego('Adivina el Código — ¡Descifrado!');
     const codigo = partidaCodigo.codigoSecreto.join('');
+    const esDia = partidaCodigo.modo === 'dia';
+    const intentos = partidaCodigo.intentosUsados;
+
+    const botonesEspeciales = esDia ? `
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:8px;">
+            <button class="btn-secundario" id="btn-compartir-reto">📤 Compartir resultado</button>
+            <button class="btn-secundario" id="btn-ver-menu-cod">Volver al menú</button>
+        </div>
+    ` : `
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn-secundario" id="btn-compartir-codigo">📤 Compartir resultado</button>
+            <button class="btn-secundario" id="btn-otro-codigo">Jugar otro código</button>
+            <button class="btn-principal" id="btn-volver-menu-codigo">Volver al menú</button>
+        </div>
+    `;
 
     renderVista(`
         <div class="pantalla-juego">
@@ -363,18 +449,24 @@ function mostrarResultadoCodigo() {
                 <div class="veredicto">🎉 ¡Código descifrado!</div>
                 <p class="subtexto" style="margin-top:6px;">El código secreto era:</p>
                 <div class="codigo-descifrado">${codigo}</div>
+                ${esDia ? `<p style="margin-top:10px; font-weight:700; color:var(--gold-dark);">Lo has resuelto en ${intentos} ${intentos === 1 ? 'intento' : 'intentos'} 🎯</p>` : ''}
             </div>
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                <button class="btn-secundario" id="btn-compartir-codigo">📤 Compartir resultado</button>
-                <button class="btn-secundario" id="btn-otro-codigo">Jugar otro código</button>
-                <button class="btn-principal" id="btn-volver-menu-codigo">Volver al menú</button>
-            </div>
+            ${botonesEspeciales}
         </div>
     `);
 
-    document.getElementById('btn-compartir-codigo').addEventListener('click', () => {
-        compartirResultado(`🔢 ¡He descifrado el código secreto en Adivina el Código! ¿Te atreves tú?`);
-    });
-    document.getElementById('btn-otro-codigo').addEventListener('click', crearPartidaCodigo);
-    document.getElementById('btn-volver-menu-codigo').addEventListener('click', mostrarSelectorJuegos);
+    if (esDia) {
+        document.getElementById('btn-compartir-reto').addEventListener('click', () => {
+            const fecha = fechaHoyString().split('-').reverse().join('/');
+            const texto = `🎯 Reto del Día de JuegaCos (${fecha})\n🔢 Adivina el Código resuelto en ${intentos} ${intentos === 1 ? 'intento' : 'intentos'}\n\n¿Puedes tú? 👉 `;
+            compartirResultado(texto);
+        });
+        document.getElementById('btn-ver-menu-cod').addEventListener('click', crearMenuCodigo);
+    } else {
+        document.getElementById('btn-compartir-codigo').addEventListener('click', () => {
+            compartirResultado(`🔢 ¡He descifrado el código secreto en Adivina el Código! ¿Te atreves tú?`);
+        });
+        document.getElementById('btn-otro-codigo').addEventListener('click', () => crearPartidaCodigo('aleatorio'));
+        document.getElementById('btn-volver-menu-codigo').addEventListener('click', crearMenuCodigo);
+    }
 }

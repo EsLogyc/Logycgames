@@ -2,7 +2,7 @@
 // SERVICE WORKER — Fiesta
 // v2: añadido ranking.js, cacheo individual tolerante a fallos
 // ================================================================
-const CACHE_NOMBRE = 'fiesta-cache-v1.4';
+const CACHE_NOMBRE = 'fiesta-cache-v1.5';
 
 const ARCHIVOS_ESENCIALES = [
     './',
@@ -22,7 +22,9 @@ const ARCHIVOS_ESENCIALES = [
     './js/main.js',
     './js/nombres-fiesta.js',
     './img/iconos/icono-192.png',
-    './img/iconos/icono-512.png'
+    './img/iconos/icono-512.png',
+    './js/cromos-data.js',
+    './js/cromos.js',
 ];
 
 self.addEventListener('install', event => {

@@ -149,6 +149,7 @@ function renderPreguntaTrivial() {
 
     document.querySelectorAll('#opciones-trivial .opcion-voto').forEach(el => {
         el.addEventListener('click', () => {
+            el.blur();                                // 👈 AÑADIDO
             const idxElegido = parseInt(el.dataset.idx);
             resolverRespuestaTrivial(idxElegido, preg, jugadorActual);
         });

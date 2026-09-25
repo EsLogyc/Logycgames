@@ -1,87 +1,92 @@
 // ================================================================
-// ¿QUIÉN SOY? — ESTADO Y FLUJO (100% libre, con banco opcional de apoyo)
+// ¿QUIÉN SOY? — con puntuación y banco de personajes curado
 // ================================================================
 
+// ================================================================
+// BANCO DE PERSONAJES — todos con nombre propio, sin genéricos
+// ================================================================
 const BANCO_PERSONAJES_QUIENSOY = [
-    // --- Superhéroes y villanos ---
-    'Batman', 'Superman', 'Spider-Man', 'Iron Man', 'Hulk', 'Thor', 'Capitán América',
-    'Wonder Woman', 'Flash', 'Aquaman', 'Viuda Negra', 'Black Panther',
-    'Doctor Strange', 'Loki', 'Thanos', 'El Joker', 'El Pingüino', 'Magneto', 'Deadpool',
-    'Wolverine', 'Goku', 'Vegeta', 'Naruto', 'Luffy', 'Sailor Moon', 'Un Power Ranger',
+    // --- Superhéroes y villanos (cómic / anime) ---
+    'Batman', 'Superman', 'Spider-Man', 'Iron Man', 'Hulk', 'Thor',
+    'Capitán América', 'Wonder Woman', 'Flash', 'Aquaman', 'Viuda Negra',
+    'Black Panther', 'Doctor Strange', 'Loki', 'Thanos', 'El Joker',
+    'El Pingüino', 'Magneto', 'Deadpool', 'Wolverine',
+    'Goku', 'Vegeta', 'Gohan', 'Bulma', 'Naruto', 'Sasuke', 'Sakura',
+    'Kakashi', 'Luffy', 'Zoro', 'Nami', 'Sailor Moon',
 
     // --- Disney y Pixar ---
-    'Mickey Mouse', 'Pato Donald', 'Goofy', 'Blancanieves', 'La Cenicienta', 'Rapunzel',
-    'La Bella Durmiente', 'La Sirenita', 'Elsa de Frozen', 'Anna de Frozen',
-    'Olaf', 'Buzz Lightyear', 'Woody de Toy Story', 'Nemo', 'Dory', 'Simba', 'Timón',
-    'Pumba', 'Aladino', 'Jasmine', 'El Genio de la Lámpara', 'Pinocho', 'Peter Pan',
-    'Campanilla', 'Bambi', 'Dumbo', 'Mulan', 'Vaiana', 'Mirabel de Encanto',
-    'Winnie the Pooh', 'Stitch', 'Wall-E', 'Remy de Ratatouille',
-    'Bob Parr (Mr. Increíble)', 'Helen Parr (Elastigirl)', 'Miguel de Coco',
+    'Mickey Mouse', 'Minnie Mouse', 'Pato Donald', 'Goofy', 'Pluto',
+    'Blancanieves', 'La Cenicienta', 'Rapunzel', 'Aurora (La Bella Durmiente)',
+    'Ariel (La Sirenita)', 'Elsa de Frozen', 'Anna de Frozen', 'Olaf',
+    'Buzz Lightyear', 'Woody', 'Nemo', 'Dory', 'Simba', 'Nala', 'Timón',
+    'Pumba', 'Aladino', 'Jasmine', 'El Genio de la Lámpara', 'Pinocho',
+    'Peter Pan', 'Campanilla', 'Bambi', 'Dumbo', 'Mulan', 'Vaiana',
+    'Mirabel de Encanto', 'Winnie the Pooh', 'Tigger', 'Stitch', 'Lilo',
+    'WALL-E', 'Remy de Ratatouille', 'Mr. Increíble', 'Elastigirl',
+    'Miguel de Coco',
 
-    // --- Dibujos animados clásicos ---
-    'Homer Simpson', 'Marge Simpson', 'Bart Simpson', 'Lisa Simpson', 'Bob Esponja',
-    'Patricio Estrella', 'Calamardo', 'Arenita', 'Don Cangrejo', 'Pikachu', 'Ash Ketchum',
-    'Bugs Bunny', 'Pato Lucas', 'Tom', 'Jerry', 'Popeye', 'Scooby-Doo', 'Shaggy',
-    'Pedro Picapiedra', 'Pablo Mármol', 'He-Man', 'Los Minions', 'Gru', 'Mafalda',
-    'Mortadelo', 'Filemón', 'Zipi y Zape', 'Shin Chan', 'Doraemon', 'Nobita',
-    'Las Supernenas', 'Johnny Bravo', 'Rick Sanchez', 'Morty Smith', 'Eric Cartman',
+    // --- Dibujos animados ---
+    'Homer Simpson', 'Marge Simpson', 'Bart Simpson', 'Lisa Simpson',
+    'Bob Esponja', 'Patricio Estrella', 'Calamardo', 'Pikachu',
+    'Ash Ketchum', 'Bugs Bunny', 'Pato Lucas', 'Tom', 'Jerry', 'Popeye',
+    'Scooby-Doo', 'Shaggy', 'Pedro Picapiedra', 'Pablo Mármol', 'He-Man',
+    'Gru', 'Kevin de los Minions', 'Mafalda', 'Mortadelo', 'Filemón',
+    'Zipi', 'Zape', 'Shin Chan', 'Doraemon', 'Nobita', 'Johnny Bravo',
+    'Rick Sanchez', 'Morty Smith', 'Eric Cartman',
 
     // --- Cine y televisión ---
-    'Darth Vader', 'Luke Skywalker', 'Yoda', 'Chewbacca', 'Han Solo', 'Leia Organa',
-    'Obi-Wan Kenobi', 'Kylo Ren', 'Indiana Jones', 'James Bond', 'Rocky Balboa',
-    'Terminator', 'Neo de Matrix', 'Morpheus', 'Gandalf', 'Frodo Bolsón',
-    'Gollum', 'Aragorn', 'Legolas', 'Jack Sparrow', 'Harry Potter', 'Hermione Granger',
-    'Ron Weasley', 'Dumbledore', 'Voldemort', 'Hagrid', 'Severus Snape', 'Draco Malfoy',
-    'Edward Manos de Tijeras', 'Drácula', 'Frankenstein', 'El Hombre Lobo', 'La Momia',
-    'El Fantasma de la Ópera', 'Sherlock Holmes', 'Hércules Poirot', 'Miss Marple',
-    'Walter White', 'Jesse Pinkman', 'Eleven de Stranger Things',
-    'Sheldon Cooper',
+    'Darth Vader', 'Luke Skywalker', 'Yoda', 'Chewbacca', 'Han Solo',
+    'Leia Organa', 'Obi-Wan Kenobi', 'Kylo Ren', 'Indiana Jones',
+    'James Bond', 'Rocky Balboa', 'Terminator', 'Neo de Matrix', 'Morfeo',
+    'Trinity de Matrix', 'Gandalf', 'Frodo Bolsón', 'Gollum', 'Aragorn',
+    'Legolas', 'Jack Sparrow', 'Harry Potter', 'Hermione Granger',
+    'Ron Weasley', 'Dumbledore', 'Voldemort', 'Hagrid', 'Severus Snape',
+    'Draco Malfoy', 'Edward Manos de Tijeras', 'Drácula', 'Frankenstein',
+    'El Hombre Lobo', 'La Momia', 'El Fantasma de la Ópera',
+    'Sherlock Holmes', 'Hércules Poirot', 'Miss Marple', 'Walter White',
+    'Jesse Pinkman', 'Eleven de Stranger Things', 'Sheldon Cooper',
 
     // --- Ficción y fantasía ---
     'Shrek', 'Fiona', 'Burro de Shrek', 'El Gato con Botas',
-    'Alicia en el País de las Maravillas', 'El Sombrerero Loco', 'La Reina de Corazones',
-    'El Grinch', 'Jack Skellington', 'E.T.',
-    'R2-D2', 'C-3PO', 'BB-8', 'Godzilla', 'King Kong', 'Una Tortuga Ninja',
+    'Alicia en el País de las Maravillas', 'El Sombrerero Loco',
+    'La Reina de Corazones', 'El Grinch', 'Jack Skellington', 'E.T.',
+    'R2-D2', 'C-3PO', 'BB-8', 'Godzilla', 'King Kong',
 
     // --- Personajes históricos ---
-    'Cleopatra', 'Julio César', 'Napoleón Bonaparte', 'Leonardo da Vinci', 'Miguel Ángel',
-    'Albert Einstein', 'Isaac Newton', 'Marie Curie', 'Galileo Galilei', 'Mozart',
-    'Beethoven', 'Van Gogh', 'Frida Kahlo', 'Picasso', 'Dalí', 'Cristóbal Colón',
-    'Marco Polo', 'Gandhi', 'Nelson Mandela', 'Martin Luther King',
-    'Juana de Arco', 'Isabel la Católica', 'Alejandro Magno', 'Ramsés II', 'Tutankamón',
+    'Cleopatra', 'Julio César', 'Napoleón Bonaparte', 'Leonardo da Vinci',
+    'Miguel Ángel', 'Albert Einstein', 'Isaac Newton', 'Marie Curie',
+    'Galileo Galilei', 'Mozart', 'Beethoven', 'Van Gogh', 'Frida Kahlo',
+    'Picasso', 'Salvador Dalí', 'Cristóbal Colón', 'Marco Polo', 'Gandhi',
+    'Nelson Mandela', 'Martin Luther King', 'Juana de Arco',
+    'Isabel la Católica', 'Alejandro Magno', 'Ramsés II', 'Tutankamón',
+    'Julio Verne', 'Miguel de Cervantes', 'William Shakespeare',
+
+    // --- Literatura y cuentos ---
+    'Don Quijote', 'Sancho Panza', 'Hamlet', 'Romeo', 'Julieta',
+    'Robinson Crusoe', 'El Principito', 'Pippi Calzaslargas', 'Matilda',
+    'Willy Wonka', 'Caperucita Roja', 'El Lobo Feroz', 'Ricitos de Oro',
+    'Hansel', 'Gretel', 'El Soldadito de Plomo', 'La Ratita Presumida',
+    'El Patito Feo', 'La Bella', 'La Bestia', 'Gastón', 'Alí Babá',
+    'Simbad el Marino', 'Robin Hood', 'Tarzán', 'Jane', 'Mowgli', 'Baloo',
+    'El Rey Arturo', 'Merlín',
 
     // --- Deportistas ---
-    'Michael Jordan', 'Lionel Messi', 'Cristiano Ronaldo', 'Ronaldinho', 'Pelé',
-    'Maradona', 'Rafa Nadal', 'Roger Federer', 'Serena Williams', 'Usain Bolt',
-    'Michael Phelps', 'Kobe Bryant', 'LeBron James', 'Fernando Alonso',
-    'Pau Gasol', 'Andrés Iniesta', 'Iker Casillas',
+    'Michael Jordan', 'Lionel Messi', 'Cristiano Ronaldo', 'Ronaldinho',
+    'Pelé', 'Maradona', 'Rafa Nadal', 'Roger Federer', 'Serena Williams',
+    'Usain Bolt', 'Michael Phelps', 'Kobe Bryant', 'LeBron James',
+    'Fernando Alonso', 'Pau Gasol', 'Andrés Iniesta', 'Iker Casillas',
+    'Zinedine Zidane', 'David Beckham',
 
     // --- Músicos y cantantes ---
-    'Michael Jackson', 'Madonna', 'Freddie Mercury', 'Elvis Presley', 'John Lennon',
-    'Paul McCartney', 'Bob Marley', 'David Bowie', 'Lady Gaga', 'Beyoncé',
-    'Taylor Swift', 'Rosalía', 'Bad Bunny', 'Shakira', 'Ricky Martin',
-    'Alejandro Sanz', 'Aitana', 'Karol G',
+    'Michael Jackson', 'Madonna', 'Freddie Mercury', 'Elvis Presley',
+    'John Lennon', 'Paul McCartney', 'Bob Marley', 'David Bowie',
+    'Lady Gaga', 'Beyoncé', 'Taylor Swift', 'Rosalía', 'Bad Bunny',
+    'Shakira', 'Ricky Martin', 'Alejandro Sanz', 'Aitana', 'Karol G',
 
-    // --- Personajes famosos actuales ---
-    'Ibai Llanos', 'El Rubius', 'AuronPlay', 'TheGrefg', 'Wismichu', 'Vegetta777',
-    'Luzu', 'Mangel', 'Cristinini', 'Arigameplays', 'Rivers',
-
-    // --- Cuentos y fantasía ---
-    'Caperucita Roja', 'El Lobo Feroz', 'Un Cerdito de los Tres Cerditos',
-    'Hansel y Gretel', 'El Soldadito de Plomo', 'La Ratita Presumida', 'El Patito Feo',
-    'La Bella', 'La Bestia', 'Gastón', 'Alí Babá', 'Simbad el Marino', 'Robin Hood',
-    'Tarzán', 'Jane', 'Mowgli',
-
-    // --- Roles y arquetipos ---
-    'Un profesor de matemáticas', 'Una profesora de inglés', 'Un bombero', 'Un policía',
-    'Un médico', 'Una enfermera', 'Un astronauta', 'Un pirata', 'Un vampiro',
-    'Un superhéroe inventado', 'Un extraterrestre', 'Un dinosaurio famoso',
-    'Un futbolista muy conocido', 'Un cantante famoso', 'Un rey medieval',
-    'Una bruja de cuento', 'Un mago', 'Un detective privado', 'Un vaquero del oeste',
-    'Un ninja', 'Un samurái', 'Un robot', 'Un zombi', 'Un fantasma',
-    'Un genio de la lámpara', 'Un duende', 'Un hada', 'Un dragón',
-    'Un youtuber famoso', 'Un streamer', 'Un chef con estrella Michelin',
-    'Un científico loco'
+    // --- Streamers y youtubers ---
+    'Ibai Llanos', 'El Rubius', 'AuronPlay', 'TheGrefg', 'Wismichu',
+    'Vegetta777', 'Luzu', 'Mangel', 'Cristinini', 'Arigameplays',
+    'Rivers', 'Ninja', 'PewDiePie', 'MrBeast'
 ];
 
 function obtenerPersonajeAleatorioQuienSoy() {
@@ -93,6 +98,7 @@ let partidaQuienSoy = null;
 function crearPartidaQuienSoy() {
     partidaQuienSoy = {
         jugadores: [],
+        puntuaciones: {},         // { nombre: puntos }
         turnoProtagonistaIndex: 0,
         personajeActual: '',
         rondasJugadas: 0,
@@ -127,6 +133,9 @@ function renderConfiguracionQuienSoy() {
                 <div style="margin-top:14px; display:flex; gap:10px; justify-content:center;">
                     <button class="btn-secundario" id="btn-add-jugador-quiensoy" ${partidaQuienSoy.jugadores.length >= 10 ? 'disabled' : ''}>+ Añadir jugador</button>
                 </div>
+                <p style="margin-top:14px; font-size:0.8rem; color:var(--text-secondary);">
+                    🏆 Cada acierto suma 1 punto al que lo adivina.
+                </p>
             </div>
             <button class="btn-principal" id="btn-empezar-quiensoy">Empezar partida</button>
         </div>
@@ -160,12 +169,31 @@ function renderConfiguracionQuienSoy() {
             return;
         }
         partidaQuienSoy.jugadores = nombresValidos;
-        guardarJugadoresGuardados(nombresValidos);
+        // Inicializar puntuaciones a 0
+        partidaQuienSoy.puntuaciones = {};
+        nombresValidos.forEach(n => partidaQuienSoy.puntuaciones[n] = 0);
         partidaQuienSoy.turnoProtagonistaIndex = 0;
+        guardarJugadoresGuardados(nombresValidos);
         logEvento(`🎭 Nueva partida de ¿Quién soy? con ${nombresValidos.length} jugadores.`);
         actualizarPanelJugadores(partidaQuienSoy.jugadores, 0);
         renderAvisoAlejarseProtagonista();
     });
+}
+
+// ----------------------------------------------------------------
+// MARCADOR REUTILIZABLE
+// ----------------------------------------------------------------
+function renderMarcadorQuienSoy() {
+    const puntuaciones = partidaQuienSoy.puntuaciones || {};
+    const ordenados = Object.entries(puntuaciones).sort((a, b) => b[1] - a[1]);
+    return `
+        <div class="marcador-quiensoy">
+            ${ordenados.map(([nombre, pts]) => {
+                const esProtagonista = nombre === partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
+                return `<span class="punto-jugador ${esProtagonista ? 'turno' : ''}">${nombre}: <strong>${pts}</strong></span>`;
+            }).join('')}
+        </div>
+    `;
 }
 
 // ----------------------------------------------------------------
@@ -178,6 +206,7 @@ function renderAvisoAlejarseProtagonista() {
 
     renderVista(`
         <div class="pantalla-juego">
+            ${renderMarcadorQuienSoy()}
             <h2>🙈 Que ${protagonista} no mire</h2>
             <div class="tarjeta-central pase-dispositivo">
                 <div class="icono-pase">🙈</div>
@@ -191,13 +220,14 @@ function renderAvisoAlejarseProtagonista() {
 }
 
 // ----------------------------------------------------------------
-// FASE 3 + 4 fusionadas: elegir el personaje Y mostrarlo al grupo
+// FASE 3: ELEGIR EL PERSONAJE
 // ----------------------------------------------------------------
 function renderEntradaPersonajeQuienSoy() {
     const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     renderVista(`
         <div class="pantalla-juego">
+            ${renderMarcadorQuienSoy()}
             <h2>✍️ Elegid el personaje</h2>
             <p class="subtexto">${protagonista} no debe ver esto.</p>
             <div class="tarjeta-central">
@@ -238,13 +268,14 @@ function renderEntradaPersonajeQuienSoy() {
 }
 
 // ----------------------------------------------------------------
-// FASE 4: SE MUESTRA A TODOS MENOS AL PROTAGONISTA
+// FASE 4: MOSTRAR AL GRUPO
 // ----------------------------------------------------------------
 function renderRevelarAlGrupo() {
     const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     renderVista(`
         <div class="pantalla-juego">
+            ${renderMarcadorQuienSoy()}
             <h2>👀 Memorizadlo</h2>
             <div class="tarjeta-central tarjeta-personaje">
                 <p class="subtexto">El personaje de ${protagonista} es:</p>
@@ -267,12 +298,13 @@ function renderRondaPreguntasQuienSoy() {
 
     renderVista(`
         <div class="pantalla-juego">
+            ${renderMarcadorQuienSoy()}
             <h2>🎤 ${protagonista}, pregunta lo que quieras</h2>
             <div class="tarjeta-central">
                 <p class="subtexto">Haz preguntas en voz alta que se respondan con sí o no. El grupo responde sin enseñarte la pantalla.</p>
             </div>
             <button class="btn-principal" id="btn-han-acertado">🎉 ¡Lo he adivinado!</button>
-            <button class="btn-secundario" id="btn-me-rindo">🏳️ Me rindo (ver la respuesta)</button>
+            <button class="btn-secundario" id="btn-me-rindo">🏳️ Me rindo</button>
         </div>
     `);
 
@@ -285,32 +317,34 @@ function renderRondaPreguntasQuienSoy() {
 }
 
 // ----------------------------------------------------------------
-// FASE 6: RESULTADO Y SIGUIENTE RONDA
+// FASE 6: RESULTADO DE LA RONDA Y SIGUIENTE
 // ----------------------------------------------------------------
 function mostrarResultadoRondaQuienSoy(acerto) {
     partidaQuienSoy.rondasJugadas++;
     const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     if (acerto) {
-        logEvento(`✅ ¡${protagonista} adivinó! El personaje era "${partidaQuienSoy.personajeActual}"`);
+        // Sumar punto al protagonista
+        partidaQuienSoy.puntuaciones[protagonista] = (partidaQuienSoy.puntuaciones[protagonista] || 0) + 1;
+        logEvento(`✅ ¡${protagonista} adivinó "${partidaQuienSoy.personajeActual}"! +1 punto.`);
         registrarPartidaCompletada();
         sumarRetoSuperado();
     } else {
-        logEvento(`🏳️ ${protagonista} se rindió. Era "${partidaQuienSoy.personajeActual}"`);
+        logEvento(`🏳️ ${protagonista} se rindió. Era "${partidaQuienSoy.personajeActual}".`);
     }
 
     setTituloJuego('¿Quién soy? — Resultado');
     renderVista(`
         <div class="pantalla-juego">
+            ${renderMarcadorQuienSoy()}
             <div class="tarjeta-central">
                 <div class="veredicto">${acerto ? '🎉 ¡Adivinado!' : '🏳️ Rendición'}</div>
                 <p style="margin-top:8px;">${protagonista}, el personaje era:</p>
                 <div class="personaje-nombre">${partidaQuienSoy.personajeActual}</div>
+                ${acerto ? `<p style="margin-top:12px; color:var(--success-dark); font-weight:700;">+1 punto para ${protagonista}</p>` : ''}
             </div>
             <button class="btn-principal" id="btn-siguiente-ronda-quiensoy">Siguiente protagonista →</button>
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                <button class="btn-secundario" id="btn-terminar-quiensoy">Terminar partida</button>
-            </div>
+            <button class="btn-secundario" id="btn-terminar-quiensoy">Ver marcador final</button>
         </div>
     `);
 
@@ -319,5 +353,52 @@ function mostrarResultadoRondaQuienSoy(acerto) {
         actualizarPanelJugadores(partidaQuienSoy.jugadores, partidaQuienSoy.turnoProtagonistaIndex);
         renderAvisoAlejarseProtagonista();
     });
-    document.getElementById('btn-terminar-quiensoy').addEventListener('click', mostrarSelectorJuegos);
+    document.getElementById('btn-terminar-quiensoy').addEventListener('click', renderMarcadorFinalQuienSoy);
+}
+
+// ----------------------------------------------------------------
+// FASE 7: MARCADOR FINAL
+// ----------------------------------------------------------------
+function renderMarcadorFinalQuienSoy() {
+    setTituloJuego('¿Quién soy? — Marcador final');
+    const ordenados = Object.entries(partidaQuienSoy.puntuaciones).sort((a, b) => b[1] - a[1]);
+    const maxPuntos = ordenados[0] ? ordenados[0][1] : 0;
+
+    const filas = ordenados.map(([nombre, pts], i) => {
+        const esGanador = pts === maxPuntos && maxPuntos > 0;
+        return `<div class="item" style="display:flex; justify-content:space-between; padding:8px 0; ${esGanador ? 'font-weight:800; color:var(--gold-dark);' : ''}">
+            <span>${i + 1}. ${nombre}</span>
+            <span>${pts} ${pts === 1 ? 'punto' : 'puntos'} ${esGanador ? '🏆' : ''}</span>
+        </div>`;
+    }).join('');
+
+    renderVista(`
+        <div class="pantalla-juego">
+            <div class="tarjeta-central">
+                <div class="veredicto">🏆 Marcador final</div>
+                <div style="margin-top:14px; text-align:left; max-width:280px; margin-left:auto; margin-right:auto;">
+                    ${filas}
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn-secundario" id="btn-compartir-quiensoy">📤 Compartir</button>
+                <button class="btn-secundario" id="btn-otra-quiensoy">Jugar otra partida</button>
+                <button class="btn-principal" id="btn-volver-menu-quiensoy">Volver al menú</button>
+            </div>
+        </div>
+    `);
+
+    document.getElementById('btn-compartir-quiensoy').addEventListener('click', () => {
+        const resumen = ordenados.map(([n, p]) => `${n}: ${p}`).join(' · ');
+        compartirResultado(`🎭 ¿Quién soy? — ${resumen}`);
+    });
+    document.getElementById('btn-otra-quiensoy').addEventListener('click', () => {
+        const jugadoresAnteriores = partidaQuienSoy.jugadores;
+        crearPartidaQuienSoy();
+        partidaQuienSoy.jugadores = jugadoresAnteriores;
+        partidaQuienSoy.puntuaciones = {};
+        jugadoresAnteriores.forEach(n => partidaQuienSoy.puntuaciones[n] = 0);
+        renderConfiguracionQuienSoy();
+    });
+    document.getElementById('btn-volver-menu-quiensoy').addEventListener('click', mostrarSelectorJuegos);
 }

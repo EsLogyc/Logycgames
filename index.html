@@ -66,6 +66,12 @@
                     <span id="mis-aciertos">🎓 0</span>
                 </div>
             </div>
+            <div class="cromo-panel" id="bloque-cromos-panel">
+                <div class="label">🃏 Álbum Canino</div>
+                <div class="cromo-panel-detalle">
+                    <span id="contador-cromos-panel">0 / 20</span> razas
+                </div>
+            </div>
             <div class="ultimo-juego" id="bloque-ultimo-juego" style="display:none;">
                 <div class="label">🕹️ Última partida</div>
                 <div id="texto-ultimo-juego"></div>
@@ -90,17 +96,16 @@
             <div id="chat-mensajes">
                 <div class="msg sistema">🎉 Bienvenido. Elige un minijuego para empezar.</div>
             </div>
-            <!-- ✅ IDs corregidos para coincidir con chat.js -->
             <div id="chat-input">
                 <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
                 <button id="chat-input-enviar" aria-label="Enviar">📨</button>
             </div>
         </aside>
 
-        <!-- OVERLAY DEL PANEL DERECHO (móvil) — FALTABA -->
+        <!-- OVERLAY DEL PANEL DERECHO (móvil) -->
         <div id="right-panel-overlay"></div>
 
-        <!-- CHAT FLOTANTE MÓVIL — FALTABA -->
+        <!-- CHAT FLOTANTE MÓVIL -->
         <div id="chat-flotante-movil">
             <span class="icono-chat" id="chat-flotante-expandir" title="Ver historial completo">📜</span>
             <input type="text" id="chat-flotante-input" placeholder="Escribe un mensaje..." maxlength="200" autocomplete="off" />
@@ -133,6 +138,12 @@
                         <span id="mis-aciertos-movil">🎓 0</span>
                     </div>
                 </div>
+                <div class="cromo-panel">
+                    <div class="label">🃏 Álbum Canino</div>
+                    <div class="cromo-panel-detalle">
+                        <span id="contador-cromos-panel-movil">0 / 20</span> razas
+                    </div>
+                </div>
                 <div class="jugadores-panel"><div class="label">👥 Jugadores</div><div id="lista-jugadores-panel-movil"><span class="vacio">Sin partida activa</span></div></div>
             </div>
         </div>
@@ -140,10 +151,10 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- SCRIPTS: el orden importa                                 -->
+    <!-- SCRIPTS: el orden importa                                    -->
     <!-- ============================================================ -->
 
-      <!-- 1) SDK de Supabase -->
+    <!-- 1) SDK de Supabase -->
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- 2) Datos y juegos -->
@@ -156,11 +167,12 @@
     <script defer src="js/quiensoy.js"></script>
     <script defer src="js/codigo.js"></script>
 
-    <!-- 3) Chat y ranking -->
+    <!-- 3) Chat, ranking y álbum canino -->
     <script defer src="js/chat.js"></script>
     <script defer src="js/ranking.js"></script>
-    <script defer src="js/nombres-fiesta.js"></script> 
     <script defer src="js/nombres-fiesta.js"></script>
+    <script defer src="js/cromos-data.js"></script>
+    <script defer src="js/cromos.js"></script>
 
     <!-- 4) main.js SIEMPRE el último -->
     <script defer src="js/main.js"></script>

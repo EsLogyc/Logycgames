@@ -150,7 +150,9 @@ function mostrarSelectorJuegos() {
             } else if (id === 'quiensoy') {
                 crearPartidaQuienSoy();
             } else if (id === 'codigo') {
-                crearPartidaCodigo();
+                 crearMenuCodigo();
+            } else if (id === 'cromos') {
+                crearPartidaCromos();
             }
         });
     });
@@ -443,3 +445,4 @@ console.log('🎉 Plataforma de minijuegos — cargada');
 // 👇 Conectar el chat en directo con Supabase
 inicializarChat();
 inicializarRanking();
+inicializarContadorCromos();
