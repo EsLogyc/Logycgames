@@ -1859,3 +1859,308 @@ html, body {
     }
     .categorias button:not(.active):not(.premium) { display: inline-block; }
 }
+/* Fallback con la inicial cuando no hay foto */
+.foto-fallback-letra {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--gold);
+    background: linear-gradient(135deg, #f8f4e8, #f0e8d0);
+    border-radius: inherit;
+    letter-spacing: -2px;
+}
+.foto-fallback-letra.en-carta {
+    font-size: 4.5rem;
+    color: var(--gold-dark);
+}
+/* Icono SVG dentro de los botones de donación */
+.btn-donacion svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    color: #003087;   /* azul PayPal en reposo */
+    transition: var(--transition);
+}
+.btn-donacion:hover svg {
+    color: #fff;      /* blanco al hacer hover (fondo dorado) */
+}
+/* ================================================================
+   FRASE DE BIENVENIDA (selector de juegos)
+   ================================================================ */
+.frase-bienvenida {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(212, 168, 67, 0.08), rgba(212, 168, 67, 0.02));
+    border: 1px solid var(--gold-light);
+    animation: aparecer 0.5s ease-out;
+}
+
+.frase-bienvenida .frase-texto {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold-dark);
+    text-align: center;
+    font-style: italic;
+    line-height: 1.35;
+}
+
+@media (max-width: 480px) {
+    .frase-bienvenida {
+        padding: 12px 14px;
+        margin-bottom: 18px;
+    }
+    .frase-bienvenida .frase-texto {
+        font-size: 0.85rem;
+    }
+}
+/* ================================================================
+   SOPA DE LETRAS
+   ================================================================ */
+.pantalla-sopa { max-width: 640px; }
+
+.sopa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 480px;
+    margin: 0 auto 8px;
+    padding: 0 4px;
+}
+.sopa-timer {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+}
+.sopa-contador {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--gold-dark);
+    background: rgba(212, 168, 67, 0.12);
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.sopa-categoria {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.sopa-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 2px;
+    max-width: 480px;
+    margin: 0 auto;
+    user-select: none;
+}
+
+.sopa-celda {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.68rem, 3.2vw, 0.95rem);
+    font-weight: 800;
+    background: var(--bg-body);
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background 0.15s, color 0.15s, transform 0.15s;
+    -webkit-tap-highlight-color: transparent;
+}
+.sopa-celda:hover:not(.encontrada) {
+    background: var(--bg-card);
+    color: var(--gold-dark);
+}
+.sopa-celda.seleccion {
+    background: var(--gold);
+    color: #fff;
+    transform: scale(1.08);
+}
+.sopa-celda.encontrada {
+    background: var(--success);
+    color: #fff;
+    cursor: default;
+}
+.sopa-celda.seleccion-fallida {
+    background: var(--danger) !important;
+    color: #fff;
+}
+
+.sopa-palabras-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+.sopa-palabras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+}
+.sopa-palabra {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--bg-body);
+    color: var(--text-secondary);
+    letter-spacing: 0.8px;
+    transition: var(--transition);
+}
+.sopa-palabra.encontrada {
+    background: rgba(76, 175, 125, 0.15);
+    color: var(--success-dark);
+    text-decoration: line-through;
+}
+
+@media (max-width: 480px) {
+    .sopa-grid {
+        gap: 1px;
+        max-width: 100%;
+    }
+    .sopa-celda {
+        border-radius: 3px;
+        font-size: clamp(0.6rem, 3vw, 0.8rem);
+    }
+    .sopa-palabra {
+        font-size: 0.68rem;
+        padding: 4px 10px;
+    }
+}
+/* ================================================================
+   SUBRAZAS dentro de la carta del Álbum Canino
+   ================================================================ */
+.subrazas-bloque {
+    padding: 8px 4px 6px;
+    border-top: 1px dashed var(--border-color);
+    margin-top: 4px;
+}
+.subrazas-titulo {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    font-weight: 700;
+    margin-bottom: 6px;
+    text-align: center;
+}
+.subrazas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.subraza-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+.subraza-chip.conseguida {
+    background: rgba(212, 168, 67, 0.1);
+    border-color: var(--gold-light);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.subraza-chip .subraza-emoji {
+    font-size: 1rem;
+    line-height: 1;
+}
+.subraza-chip .subraza-nombre {
+    flex: 1;
+    text-align: left;
+}
+.subraza-chip .subraza-candado {
+    font-size: 0.8rem;
+    opacity: 0.6;
+}
+
+/* En carta bloqueada, ocultar el bloque de subrazas */
+.carta-bloqueada .subrazas-bloque {
+    display: none;
+}
+
+/* Pregunta de subraza: foto con más grande */
+.pregunta-cromos {
+    font-size: 1.05rem;
+    line-height: 1.45;
+}
+
+/* ================================================================
+   ¿QUIÉN SOY? — Tarjeta bonita con info del personaje
+   ================================================================ */
+.tarjeta-info-quiensoy {
+    margin: 14px auto 10px;
+    max-width: 280px;
+    padding: 12px 16px;
+    background: var(--bg-body);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.tarjeta-info-quiensoy .info-linea {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    display: flex;
+    gap: 8px;
+}
+.tarjeta-info-quiensoy .info-label {
+    font-weight: 700;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    min-width: 70px;
+}
+
+.frase-curiosa-quiensoy {
+    font-size: 0.82rem;
+    font-style: italic;
+    color: var(--gold-dark);
+    text-align: center;
+    margin: 10px auto 0;
+    max-width: 300px;
+    padding: 8px 12px;
+    border-top: 1px dashed var(--border-color);
+    border-bottom: 1px dashed var(--border-color);
+    line-height: 1.4;
+}
+
+/* ================================================================
+   ADIVINA LA CANCIÓN
+   ================================================================ */
+.cancion-recordatorio {
+    margin: 14px auto 8px;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, rgba(212, 168, 67, 0.12), rgba(212, 168, 67, 0.03));
+    border: 1px solid var(--gold-light);
+    border-radius: 12px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--gold-dark);
+    text-align: center;
+    max-width: 320px;
+    letter-spacing: -0.3px;
+}

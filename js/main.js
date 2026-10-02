@@ -59,6 +59,64 @@ const BANCO_NOMBRES_ABSURDOS = [
     'Sinforosa', 'Prudencio', 'Escolástica', 'Teodulfo', 'Remedios', 'Fulgencio', 'Perpetua'
 ];
 
+// ================================================================
+// FRASES DE BIENVENIDA (aleatorias al entrar al menú)
+// Usa {nombre} para personalizar con el nombre del jugador.
+// ================================================================
+const FRASES_BIENVENIDA = [
+    // 👋 Saludos personalizados
+    "¡Buenas, {nombre}! ¿A qué jugamos hoy?",
+    "¡Hola, {nombre}! Se te echaba de menos.",
+    "¡Qué alegría verte, {nombre}! 🐾",
+    "{nombre}, ¿listo para liarla?",
+    "¡Bienvenido de nuevo, {nombre}!",
+    "¡Vaya, mira quién ha vuelto! {nombre} 🎉",
+
+    // 👋 Saludos genéricos
+    "¡Hola de nuevo! ¿Qué se cuece?",
+    "¡Buenas! ¿Empezamos?",
+    "¡Qué alegría verte por aquí!",
+    "Se te echaba de menos 🐾",
+    "¡Bienvenido a la fiesta!",
+    "¡Hola, hola! ¿A qué jugamos?",
+
+    // 💪 Motivadoras
+    "Hoy es un buen día para jugar con amigos.",
+    "Pasad el móvil, que empieza la diversión.",
+    "Ríete, juega, repite.",
+    "Un minijuego al día, la risa garantizada.",
+    "Aquí no hay anuncios, solo juegos.",
+
+    // 😄 Con humor
+    "Cuidado: este menú puede causar adicción.",
+    "¿Has hecho popo hoy? Es por saber...",
+    "Los trivials no se juegan solos.",
+    "Menos scroll, más risas.",
+    "El único que pierde aquí es el aburrimiento.",
+
+    // 🐶 Guiños al Álbum Canino
+    "20 razas te esperan en el Álbum Canino 🐶",
+    "¿Ya has desbloqueado al Teckel? Es muy testarudo.",
+    "Guau guau 🐾 ¿A qué jugamos?",
+
+    // 🎯 Guiños al Reto del Día
+    "¿Ya has resuelto el Reto del Día?",
+    "El código de hoy no se resuelve solo...",
+
+    // 💭 Reflexivas
+    "El mejor juego es el que se juega acompañado.",
+    "Los buenos ratos no se descargan, se juegan.",
+    "Comparte el móvil, multiplica las risas.",
+    "Aquí se viene a jugar, no a competir."
+];
+
+function obtenerFraseBienvenida() {
+    const nombre = (cargarJugadoresGuardados() || [])[0];
+    // Si no hay nombre, filtramos las que necesitan uno
+    const validas = FRASES_BIENVENIDA.filter(f => !f.includes('{nombre}') || nombre);
+    const elegida = validas[Math.floor(Math.random() * validas.length)];
+    return nombre ? elegida.replace(/\{nombre\}/g, nombre) : elegida;
+}
 function obtenerNombreAbsurdo() {
     return BANCO_NOMBRES_ABSURDOS[Math.floor(Math.random() * BANCO_NOMBRES_ABSURDOS.length)];
 }
@@ -123,9 +181,8 @@ function mostrarSelectorJuegos() {
 
     renderVista(`
         <div style="max-width: 900px; margin: 0 auto;">
-            <div id="galeria-header" style="justify-content:flex-start; text-align:left; flex-direction:column; align-items:flex-start; gap:4px; margin-bottom:24px;">
-                <h2 style="font-size:1.3rem;">🎉 ¿A qué jugamos?</h2>
-                <span style="font-size:0.85rem; color:var(--text-secondary);">Pasad el dispositivo entre todos. Nada de cuentas, nada de internet.</span>
+            <div class="frase-bienvenida">
+                <span class="frase-texto">${obtenerFraseBienvenida()}</span>
             </div>
             <div id="selector-juegos">${tarjetas}</div>
         </div>
@@ -153,6 +210,10 @@ function mostrarSelectorJuegos() {
                  crearMenuCodigo();
             } else if (id === 'cromos') {
                 crearPartidaCromos();
+            } else if (id === 'sopa') {
+                crearMenuSopa();
+            } else if (id === 'canciones') {
+                crearPartidaCanciones();
             }
         });
     });

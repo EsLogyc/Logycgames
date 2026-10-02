@@ -9,7 +9,9 @@ const CATALOGO_JUEGOS = [
     { id: 'trivialperros', nombre: 'Trivial de Perros', icono: '🐶', descripcion: 'Adivina razas de perros por su foto y sus características.', disponible: true },
     { id: 'quiensoy', nombre: '¿Quién soy?', icono: '🎭', descripcion: 'Piensa un personaje libre y que el otro lo adivine con preguntas de sí o no.', disponible: true },
     { id: 'codigo', nombre: 'Adivina el Código', icono: '🔢', descripcion: 'Puzzle de lógica de 4 cifras. Deduce el código único a partir de 5 pistas.', disponible: true },
-    { id: 'cromos', nombre: 'Álbum Canino', icono: '🃏', descripcion: 'Acierta preguntas sobre perros y desbloquea cartas coleccionables.', disponible: true }
+    { id: 'cromos', nombre: 'Álbum Canino', icono: '🃏', descripcion: 'Acierta preguntas sobre perros y desbloquea cartas coleccionables.', disponible: true },
+    { id: 'sopa', nombre: 'Sopa de Letras', icono: '🔎', descripcion: 'Encuentra las palabras escondidas en la cuadrícula. Reto diario y modo libre.', disponible: true },
+    { id: 'canciones', nombre: 'Adivina la Canción', icono: '🎵', descripcion: 'Uno tararea y los demás adivinan. Canciones míticas, Disney, rock y más.', disponible: true }
 ];
 
 // ================================================================

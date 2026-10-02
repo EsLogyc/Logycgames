@@ -1,5 +1,5 @@
 // ================================================================
-// ADIVINA EL CÓDIGO — con Reto del Día
+// ADIVINA EL CÓDIGO — con Reto del Día y puzzle siempre deducible
 //  🔷 = correcto y en su sitio
 //  ▮  = correcto pero fuera de sitio
 //  (vacío) = ningún número coincide
@@ -18,7 +18,6 @@ function fechaHoyString() {
     return `${y}-${m}-${dia}`;
 }
 
-// Generador pseudoaleatorio determinista (mulberry32 simplificado)
 function crearRandomConSemilla(semilla) {
     let h = 0;
     for (let i = 0; i < semilla.length; i++) {
@@ -32,7 +31,7 @@ function crearRandomConSemilla(semilla) {
 }
 
 // ----------------------------------------------------------------
-// MENÚ DE ENTRADA (nuevo)
+// MENÚ DE ENTRADA
 // ----------------------------------------------------------------
 function crearMenuCodigo() {
     setTituloJuego('Adivina el Código');
@@ -151,8 +150,21 @@ function barajarCodigo(arr, rng = Math.random) {
     return copia;
 }
 
+// ----------------------------------------------------------------
+// Comprueba que todos los dígitos del código aparecen al menos
+// una vez entre las 5 filas de pistas. Sin esto, el puzzle puede
+// ser único pero indeducible.
+// ----------------------------------------------------------------
+function todosLosDigitosAparecen(filas, codigoSecreto) {
+    const vistos = new Set();
+    for (const fila of filas) {
+        for (const n of fila.numeros) vistos.add(n);
+    }
+    return codigoSecreto.every(n => vistos.has(n));
+}
+
 function generarFilas(rng = Math.random) {
-    const MAX_INTENTOS = 300;
+    const MAX_INTENTOS = 500;
 
     for (let intentoGlobal = 0; intentoGlobal < MAX_INTENTOS; intentoGlobal++) {
         const codigoSecreto = partidaCodigo.codigoSecreto;
@@ -178,16 +190,18 @@ function generarFilas(rng = Math.random) {
 
         if (fallo) continue;
 
-        if (verificarSolucionUnicaCodigo(filas, codigoSecreto)) {
+        // ✅ Condición doble: solución única Y todos los dígitos aparecen
+        if (verificarSolucionUnicaCodigo(filas, codigoSecreto) &&
+            todosLosDigitosAparecen(filas, codigoSecreto)) {
             partidaCodigo.filas = filas;
             return;
         }
-        // Si no hay solución única, regeneramos el código
+        // Si no cumple, regeneramos el código y volvemos a intentarlo
         generarCodigo(rng);
     }
 
-    // Fallback de seguridad (no debería ocurrir)
-    console.warn('No se encontró puzzle único; usando uno por defecto.');
+    // Fallback de seguridad (no debería ocurrir con 500 intentos)
+    console.warn('No se encontró puzzle válido tras 500 intentos; usando uno por defecto.');
     generarCodigo(rng);
     const codigoSecreto = partidaCodigo.codigoSecreto;
     const filas = [];
@@ -398,7 +412,6 @@ function comprobarCodigoUsuario() {
         return;
     }
 
-    // Contar intento válido
     partidaCodigo.intentosUsados++;
 
     const esCorrecto = propuesta.every((d, i) => d === partidaCodigo.codigoSecreto[i]);

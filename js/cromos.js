@@ -1,5 +1,5 @@
 // ================================================================
-// ÁLBUM CANINO — Juego + gestión del álbum
+// ÁLBUM CANINO — Juego + gestión del álbum (con subrazas)
 // ================================================================
 
 const NUM_PREGUNTAS_CROMOS = 10;
@@ -12,7 +12,18 @@ let cromosDesbloqueados = new Set();
 let jugadorCromos = { uuid: null, codigo: null };
 
 // ----------------------------------------------------------------
-// IDENTIDAD DEL JUGADOR (UUID + código respaldo)
+// HELPERS
+// ----------------------------------------------------------------
+function totalCromosPosibles() {
+    let total = RAZAS_CROMOS.length;
+    RAZAS_CROMOS.forEach(r => {
+        if (r.subrazas) total += r.subrazas.length;
+    });
+    return total;
+}
+
+// ----------------------------------------------------------------
+// IDENTIDAD DEL JUGADOR
 // ----------------------------------------------------------------
 function generarUUID() {
     if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -45,14 +56,12 @@ async function inicializarJugadorCromos() {
         return;
     }
 
-    // Generar nuevos
     uuid = generarUUID();
     codigo = generarCodigoRespaldo();
     localStorage.setItem(CLAVE_UUID, uuid);
     localStorage.setItem(CLAVE_CODIGO, codigo);
     jugadorCromos = { uuid, codigo };
 
-    // Registrar en Supabase (sin bloquear el flujo si falla)
     const nombre = (cargarJugadoresGuardados() || ['Anónimo'])[0];
     if (clienteSupabase) {
         await clienteSupabase.from('jugadores').insert({
@@ -84,16 +93,19 @@ async function cargarCromosDesbloqueados() {
     return cromosDesbloqueados;
 }
 
-async function desbloquearCromo(razaId) {
-    if (cromosDesbloqueados.has(razaId)) return false;
+// ----------------------------------------------------------------
+// DESBLOQUEAR (raza o subraza)
+// ----------------------------------------------------------------
+async function desbloquearCromo(idDesbloqueo) {
+    if (cromosDesbloqueados.has(idDesbloqueo)) return false;
 
-    cromosDesbloqueados.add(razaId);
+    cromosDesbloqueados.add(idDesbloqueo);
     actualizarContadorCromos();
 
     if (clienteSupabase && jugadorCromos.uuid) {
         const { error } = await clienteSupabase.from('cromos').insert({
             jugador_id: jugadorCromos.uuid,
-            raza_id: razaId
+            raza_id: idDesbloqueo
         });
         if (error && error.code !== '23505') {
             console.error('Error al desbloquear cromo:', error);
@@ -103,7 +115,7 @@ async function desbloquearCromo(razaId) {
 }
 
 // ----------------------------------------------------------------
-// FOTOS (dog.ceo API + caché local)
+// FOTOS (dog.ceo API + caché local + reintentos)
 // ----------------------------------------------------------------
 function cargarCacheFotos() {
     try {
@@ -119,22 +131,38 @@ async function obtenerFotoRaza(raza) {
     const cache = cargarCacheFotos();
     if (cache[raza.id]) return cache[raza.id];
 
-    try {
-        const resp = await fetch(`https://dog.ceo/api/breed/${raza.apiBreed}/images/random`);
-        const data = await resp.json();
-        if (data.status === 'success' && data.message) {
-            cache[raza.id] = data.message;
-            guardarCacheFotos(cache);
-            return data.message;
+    const url = `https://dog.ceo/api/breed/${raza.apiBreed}/images/random`;
+
+    for (let intento = 0; intento < 3; intento++) {
+        try {
+            const resp = await fetch(url);
+            if (resp.status === 429) {
+                await new Promise(r => setTimeout(r, 1000 + intento * 1000));
+                continue;
+            }
+            if (!resp.ok) continue;
+            const data = await resp.json();
+            if (data.status === 'success' && data.message) {
+                cache[raza.id] = data.message;
+                guardarCacheFotos(cache);
+                return data.message;
+            }
+        } catch (e) {
+            console.warn(`Intento ${intento + 1} fallido para ${raza.nombre}:`, e);
+            await new Promise(r => setTimeout(r, 400));
         }
-    } catch (e) {
-        console.warn('No se pudo cargar foto de', raza.nombre, e);
     }
+    console.warn(`❌ No se pudo cargar foto de ${raza.nombre} (${raza.apiBreed})`);
     return null;
 }
 
+function fallbackFotoHTML(raza, clase = '') {
+    const inicial = (raza.nombre || '?').charAt(0).toUpperCase();
+    return `<div class="foto-fallback-letra ${clase}">${inicial}</div>`;
+}
+
 // ----------------------------------------------------------------
-// MENÚ PRINCIPAL DEL JUEGO
+// MENÚ PRINCIPAL
 // ----------------------------------------------------------------
 async function crearPartidaCromos() {
     setTituloJuego('Álbum Canino');
@@ -144,7 +172,7 @@ async function crearPartidaCromos() {
 }
 
 function renderMenuCromos() {
-    const total = RAZAS_CROMOS.length;
+    const total = totalCromosPosibles();
     const conseguidos = cromosDesbloqueados.size;
     const pct = Math.round((conseguidos / total) * 100);
 
@@ -157,16 +185,16 @@ function renderMenuCromos() {
             <div class="tarjeta-central tarjeta-album-resumen">
                 <div class="icono-album">🐾</div>
                 <div class="progreso-album">
-                    <div class="progreso-album-texto">${conseguidos} / ${total} razas conseguidas</div>
+                    <div class="progreso-album-texto">${conseguidos} / ${total} cromos conseguidos</div>
                     <div class="progreso-album-barra">
                         <div class="progreso-album-relleno" style="width:${pct}%"></div>
                     </div>
                 </div>
             </div>
-
             <div style="display:flex; flex-direction:column; gap:10px;">
                 <button class="btn-principal" id="btn-jugar-cromos">🎯 Jugar (${NUM_PREGUNTAS_CROMOS} preguntas)</button>
                 <button class="btn-secundario" id="btn-ver-album-cromos">📖 Ver mi álbum</button>
+                <button class="btn-secundario" id="btn-refrescar-fotos">🔄 Recargar fotos</button>
                 <button class="btn-secundario" id="btn-codigo-respaldo">🔑 Mi código de respaldo</button>
             </div>
         </div>
@@ -176,6 +204,12 @@ function renderMenuCromos() {
     document.getElementById('btn-jugar-cromos').addEventListener('click', iniciarPartidaCromos);
     document.getElementById('btn-ver-album-cromos').addEventListener('click', renderAlbumCompleto);
     document.getElementById('btn-codigo-respaldo').addEventListener('click', renderCodigoRespaldo);
+    document.getElementById('btn-refrescar-fotos').addEventListener('click', async () => {
+        if (!confirm('¿Borrar la caché de fotos y volver a descargarlas todas? Tardará un poco.')) return;
+        try { localStorage.removeItem(CLAVE_FOTOS_CACHE); } catch (e) {}
+        logEvento('🔄 Recargando fotos...');
+        await renderAlbumCompleto();
+    });
 }
 
 // ----------------------------------------------------------------
@@ -204,7 +238,17 @@ async function renderPreguntaCromos() {
     }
 
     const raza = razas[idx];
-    const pregunta = generarPreguntaCromos(raza);
+
+    // Si la raza tiene subrazas pendientes, 50% de las veces preguntamos por subraza
+    let tipoForzado = null;
+    if (raza.subrazas && raza.subrazas.length > 0) {
+        const pendientes = raza.subrazas.filter(s => !cromosDesbloqueados.has(s.id));
+        if (pendientes.length > 0 && Math.random() < 0.5) {
+            tipoForzado = 'subraza';
+        }
+    }
+
+    const pregunta = generarPreguntaCromos(raza, tipoForzado, cromosDesbloqueados);
     partidaCromos.preguntaActual = pregunta;
 
     setTituloJuego(`Álbum Canino — ${idx + 1}/${razas.length}`);
@@ -236,16 +280,13 @@ async function renderPreguntaCromos() {
         </div>
     `);
 
-    // Cargar foto si es tipo 'foto'
     if (pregunta.tipo === 'foto') {
         const foto = await obtenerFotoRaza(raza);
         const contFoto = document.getElementById('foto-cromos');
         if (contFoto) {
-            if (foto) {
-                contFoto.innerHTML = `<img src="${foto}" alt="${raza.nombre}" class="foto-perro-img" />`;
-            } else {
-                contFoto.innerHTML = `<div class="foto-perro-fallback">🐶</div>`;
-            }
+            contFoto.innerHTML = foto
+                ? `<img src="${foto}" alt="${raza.nombre}" class="foto-perro-img" />`
+                : fallbackFotoHTML(raza);
         }
     }
 
@@ -259,38 +300,49 @@ async function renderPreguntaCromos() {
 
 async function resolverPreguntaCromos(idxElegido, pregunta) {
     const opcionElegida = pregunta.opciones[idxElegido];
-    const esCorrecta = opcionElegida.id === pregunta.raza.id;
+
+    const esSubraza = pregunta.tipo === 'subraza';
+    const idCorrecto = esSubraza ? pregunta.subraza.id : pregunta.raza.id;
+    const nombreCorrecto = esSubraza
+        ? `${pregunta.raza.nombre} · ${pregunta.subraza.nombre}`
+        : pregunta.raza.nombre;
+
+    const esCorrecta = opcionElegida.id === idCorrecto;
 
     document.querySelectorAll('.opcion-cromos').forEach((btn, i) => {
         btn.style.pointerEvents = 'none';
         const op = pregunta.opciones[i];
-        if (op.id === pregunta.raza.id) btn.classList.add('correcta');
+        if (op.id === idCorrecto) btn.classList.add('correcta');
         else if (i === idxElegido) btn.classList.add('incorrecta');
     });
 
     const feedback = document.getElementById('feedback-cromos');
+
     if (esCorrecta) {
         partidaCromos.aciertos++;
         feedback.className = 'feedback-cromos acierto';
         feedback.textContent = '✅ ¡Correcto!';
 
-        // ¿Desbloqueamos la carta?
-        const esNueva = await desbloquearCromo(pregunta.raza.id);
+        const esNueva = await desbloquearCromo(idCorrecto);
         if (esNueva) {
-            partidaCromos.cromosNuevos.push(pregunta.raza);
-            feedback.textContent = '🎉 ¡Carta nueva desbloqueada!';
+            partidaCromos.cromosNuevos.push({
+                tipo: pregunta.tipo,
+                raza: pregunta.raza,
+                subraza: pregunta.subraza || null
+            });
+            feedback.textContent = '🎉 ¡Cromo nuevo desbloqueado!';
         }
 
-        logEvento(`🃏 ${pregunta.raza.nombre} ${esNueva ? 'desbloqueado' : 'acertado'}.`);
+        logEvento(`🃏 ${nombreCorrecto} ${esNueva ? 'desbloqueado' : 'acertado'}.`);
         sumarAciertos(1);
     } else {
         feedback.className = 'feedback-cromos fallo';
-        feedback.textContent = `❌ Era: ${pregunta.raza.nombre}`;
-        logEvento(`❌ Fallo. Era ${pregunta.raza.nombre}.`);
+        feedback.textContent = `❌ Era: ${nombreCorrecto}`;
+        logEvento(`❌ Fallo. Era ${nombreCorrecto}.`);
     }
 
-    // Si es carta nueva, mostrar la carta entera con animación
-    if (esCorrecta && partidaCromos.cromosNuevos.includes(pregunta.raza)) {
+    const ultimoNuevo = partidaCromos.cromosNuevos[partidaCromos.cromosNuevos.length - 1];
+    if (esCorrecta && ultimoNuevo && ultimoNuevo.raza.id === pregunta.raza.id) {
         setTimeout(() => mostrarCartaDesbloqueada(pregunta.raza), 500);
     } else {
         setTimeout(() => {
@@ -304,7 +356,7 @@ function mostrarCartaDesbloqueada(raza) {
     const foto = cargarCacheFotos()[raza.id] || '';
     renderVista(`
         <div class="pantalla-juego pantalla-carta">
-            <h2>🎉 ¡Carta desbloqueada!</h2>
+            <h2>🎉 ¡Cromo desbloqueado!</h2>
             ${renderCartaHTML(raza, foto, true)}
             <button class="btn-principal" id="btn-continuar-carta">Continuar →</button>
         </div>
@@ -320,12 +372,37 @@ function mostrarCartaDesbloqueada(raza) {
 // ----------------------------------------------------------------
 function renderCartaHTML(raza, foto, animar = false) {
     const claseAnim = animar ? ' carta-animada' : '';
+
+    let bloqueSubrazas = '';
+    if (raza.subrazas && raza.subrazas.length > 0) {
+        const total = raza.subrazas.length;
+        const conseguidas = raza.subrazas.filter(s => cromosDesbloqueados.has(s.id)).length;
+
+        const chipsHtml = raza.subrazas.map(s => {
+            const ok = cromosDesbloqueados.has(s.id);
+            return `
+                <div class="subraza-chip ${ok ? 'conseguida' : ''}" title="${s.pista || ''}">
+                    <span class="subraza-emoji">${s.emoji}</span>
+                    <span class="subraza-nombre">${s.nombre}</span>
+                    ${ok ? '' : '<span class="subraza-candado">🔒</span>'}
+                </div>
+            `;
+        }).join('');
+
+        bloqueSubrazas = `
+            <div class="subrazas-bloque">
+                <div class="subrazas-titulo">Subrazas · ${conseguidas}/${total}</div>
+                <div class="subrazas-lista">${chipsHtml}</div>
+            </div>
+        `;
+    }
+
     return `
         <div class="carta-cromos${claseAnim}">
             <div class="carta-foto">
                 ${foto
                     ? `<img src="${foto}" alt="${raza.nombre}" />`
-                    : `<div class="carta-foto-fallback">🐶</div>`}
+                    : fallbackFotoHTML(raza, 'en-carta')}
             </div>
             <div class="carta-nombre">${raza.nombre}</div>
             <div class="carta-datos">
@@ -334,6 +411,7 @@ function renderCartaHTML(raza, foto, animar = false) {
                 <div>⚖️ <span>Peso:</span> ${raza.peso}</div>
                 <div>❤️ <span>Carácter:</span> ${raza.caracter}</div>
             </div>
+            ${bloqueSubrazas}
             <div class="carta-frase">🐾 "${raza.frase}"</div>
         </div>
     `;
@@ -356,8 +434,8 @@ function renderResultadoCromos() {
             <div class="tarjeta-central">
                 <div class="veredicto">🎯 ${aciertos}/${total} correctas</div>
                 ${nuevos > 0
-                    ? `<p style="margin-top:12px; font-weight:700; color:var(--gold-dark);">✨ ¡${nuevos} ${nuevos === 1 ? 'carta nueva' : 'cartas nuevas'}!</p>`
-                    : `<p style="margin-top:12px; color:var(--text-secondary);">No has desbloqueado cartas nuevas esta vez.</p>`}
+                    ? `<p style="margin-top:12px; font-weight:700; color:var(--gold-dark);">✨ ¡${nuevos} ${nuevos === 1 ? 'cromo nuevo' : 'cromos nuevos'}!</p>`
+                    : `<p style="margin-top:12px; color:var(--text-secondary);">No has desbloqueado cromos nuevos esta vez.</p>`}
             </div>
             <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
                 <button class="btn-secundario" id="btn-ver-album-resultado">📖 Ver álbum</button>
@@ -377,16 +455,16 @@ function renderResultadoCromos() {
 // ----------------------------------------------------------------
 async function renderAlbumCompleto() {
     await cargarCromosDesbloqueados();
-    const total = RAZAS_CROMOS.length;
+    const total = totalCromosPosibles();
     const conseguidos = cromosDesbloqueados.size;
 
-    // Cargamos fotos de las conseguidas (en paralelo, sin bloquear)
     const fotosCache = cargarCacheFotos();
-    const promesasFotos = RAZAS_CROMOS
-        .filter(r => cromosDesbloqueados.has(r.id) && !fotosCache[r.id])
-        .map(r => obtenerFotoRaza(r));
-    if (promesasFotos.length > 0) {
-        await Promise.all(promesasFotos);
+    const razasSinFoto = RAZAS_CROMOS.filter(
+        r => cromosDesbloqueados.has(r.id) && !fotosCache[r.id]
+    );
+    for (const r of razasSinFoto) {
+        await obtenerFotoRaza(r);
+        await new Promise(res => setTimeout(res, 300));
     }
 
     const cacheActualizado = cargarCacheFotos();
@@ -419,7 +497,7 @@ async function renderAlbumCompleto() {
         <div class="pantalla-juego pantalla-album">
             <button class="btn-volver" id="btn-volver-menu-album">← Volver</button>
             <h2>📖 Mi álbum</h2>
-            <p class="subtexto" style="margin-bottom:16px;">${conseguidos} de ${total} razas conseguidas</p>
+            <p class="subtexto" style="margin-bottom:16px;">${conseguidos} de ${total} cromos conseguidos</p>
             <div class="album-grid">${cartasHtml}</div>
         </div>
     `);
@@ -481,7 +559,6 @@ function renderCodigoRespaldo() {
             return;
         }
 
-        // Cambiamos la identidad local
         localStorage.setItem(CLAVE_UUID, data.jugador_id);
         localStorage.setItem(CLAVE_CODIGO, codigo);
         jugadorCromos = { uuid: data.jugador_id, codigo };
@@ -495,12 +572,14 @@ function renderCodigoRespaldo() {
 }
 
 // ----------------------------------------------------------------
-// CONTADOR MINI (para el panel izquierdo)
+// CONTADOR MINI (escritorio y móvil)
 // ----------------------------------------------------------------
 function actualizarContadorCromos() {
-    const el = document.getElementById('contador-cromos-panel');
-    if (!el) return;
-    el.textContent = `${cromosDesbloqueados.size} / ${RAZAS_CROMOS.length}`;
+    const total = totalCromosPosibles();
+    ['contador-cromos-panel', 'contador-cromos-panel-movil'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = `${cromosDesbloqueados.size} / ${total}`;
+    });
 }
 
 async function inicializarContadorCromos() {

@@ -1,106 +1,30 @@
 // ================================================================
-// ¿QUIÉN SOY? — con puntuación y banco de personajes curado
+// ¿QUIÉN SOY? — Lógica (el banco está en quiensoy-data.js)
 // ================================================================
 
-// ================================================================
-// BANCO DE PERSONAJES — todos con nombre propio, sin genéricos
-// ================================================================
-const BANCO_PERSONAJES_QUIENSOY = [
-    // --- Superhéroes y villanos (cómic / anime) ---
-    'Batman', 'Superman', 'Spider-Man', 'Iron Man', 'Hulk', 'Thor',
-    'Capitán América', 'Wonder Woman', 'Flash', 'Aquaman', 'Viuda Negra',
-    'Black Panther', 'Doctor Strange', 'Loki', 'Thanos', 'El Joker',
-    'El Pingüino', 'Magneto', 'Deadpool', 'Wolverine',
-    'Goku', 'Vegeta', 'Gohan', 'Bulma', 'Naruto', 'Sasuke', 'Sakura',
-    'Kakashi', 'Luffy', 'Zoro', 'Nami', 'Sailor Moon',
+let partidaQuienSoy = null;
 
-    // --- Disney y Pixar ---
-    'Mickey Mouse', 'Minnie Mouse', 'Pato Donald', 'Goofy', 'Pluto',
-    'Blancanieves', 'La Cenicienta', 'Rapunzel', 'Aurora (La Bella Durmiente)',
-    'Ariel (La Sirenita)', 'Elsa de Frozen', 'Anna de Frozen', 'Olaf',
-    'Buzz Lightyear', 'Woody', 'Nemo', 'Dory', 'Simba', 'Nala', 'Timón',
-    'Pumba', 'Aladino', 'Jasmine', 'El Genio de la Lámpara', 'Pinocho',
-    'Peter Pan', 'Campanilla', 'Bambi', 'Dumbo', 'Mulan', 'Vaiana',
-    'Mirabel de Encanto', 'Winnie the Pooh', 'Tigger', 'Stitch', 'Lilo',
-    'WALL-E', 'Remy de Ratatouille', 'Mr. Increíble', 'Elastigirl',
-    'Miguel de Coco',
-
-    // --- Dibujos animados ---
-    'Homer Simpson', 'Marge Simpson', 'Bart Simpson', 'Lisa Simpson',
-    'Bob Esponja', 'Patricio Estrella', 'Calamardo', 'Pikachu',
-    'Ash Ketchum', 'Bugs Bunny', 'Pato Lucas', 'Tom', 'Jerry', 'Popeye',
-    'Scooby-Doo', 'Shaggy', 'Pedro Picapiedra', 'Pablo Mármol', 'He-Man',
-    'Gru', 'Kevin de los Minions', 'Mafalda', 'Mortadelo', 'Filemón',
-    'Zipi', 'Zape', 'Shin Chan', 'Doraemon', 'Nobita', 'Johnny Bravo',
-    'Rick Sanchez', 'Morty Smith', 'Eric Cartman',
-
-    // --- Cine y televisión ---
-    'Darth Vader', 'Luke Skywalker', 'Yoda', 'Chewbacca', 'Han Solo',
-    'Leia Organa', 'Obi-Wan Kenobi', 'Kylo Ren', 'Indiana Jones',
-    'James Bond', 'Rocky Balboa', 'Terminator', 'Neo de Matrix', 'Morfeo',
-    'Trinity de Matrix', 'Gandalf', 'Frodo Bolsón', 'Gollum', 'Aragorn',
-    'Legolas', 'Jack Sparrow', 'Harry Potter', 'Hermione Granger',
-    'Ron Weasley', 'Dumbledore', 'Voldemort', 'Hagrid', 'Severus Snape',
-    'Draco Malfoy', 'Edward Manos de Tijeras', 'Drácula', 'Frankenstein',
-    'El Hombre Lobo', 'La Momia', 'El Fantasma de la Ópera',
-    'Sherlock Holmes', 'Hércules Poirot', 'Miss Marple', 'Walter White',
-    'Jesse Pinkman', 'Eleven de Stranger Things', 'Sheldon Cooper',
-
-    // --- Ficción y fantasía ---
-    'Shrek', 'Fiona', 'Burro de Shrek', 'El Gato con Botas',
-    'Alicia en el País de las Maravillas', 'El Sombrerero Loco',
-    'La Reina de Corazones', 'El Grinch', 'Jack Skellington', 'E.T.',
-    'R2-D2', 'C-3PO', 'BB-8', 'Godzilla', 'King Kong',
-
-    // --- Personajes históricos ---
-    'Cleopatra', 'Julio César', 'Napoleón Bonaparte', 'Leonardo da Vinci',
-    'Miguel Ángel', 'Albert Einstein', 'Isaac Newton', 'Marie Curie',
-    'Galileo Galilei', 'Mozart', 'Beethoven', 'Van Gogh', 'Frida Kahlo',
-    'Picasso', 'Salvador Dalí', 'Cristóbal Colón', 'Marco Polo', 'Gandhi',
-    'Nelson Mandela', 'Martin Luther King', 'Juana de Arco',
-    'Isabel la Católica', 'Alejandro Magno', 'Ramsés II', 'Tutankamón',
-    'Julio Verne', 'Miguel de Cervantes', 'William Shakespeare',
-
-    // --- Literatura y cuentos ---
-    'Don Quijote', 'Sancho Panza', 'Hamlet', 'Romeo', 'Julieta',
-    'Robinson Crusoe', 'El Principito', 'Pippi Calzaslargas', 'Matilda',
-    'Willy Wonka', 'Caperucita Roja', 'El Lobo Feroz', 'Ricitos de Oro',
-    'Hansel', 'Gretel', 'El Soldadito de Plomo', 'La Ratita Presumida',
-    'El Patito Feo', 'La Bella', 'La Bestia', 'Gastón', 'Alí Babá',
-    'Simbad el Marino', 'Robin Hood', 'Tarzán', 'Jane', 'Mowgli', 'Baloo',
-    'El Rey Arturo', 'Merlín',
-
-    // --- Deportistas ---
-    'Michael Jordan', 'Lionel Messi', 'Cristiano Ronaldo', 'Ronaldinho',
-    'Pelé', 'Maradona', 'Rafa Nadal', 'Roger Federer', 'Serena Williams',
-    'Usain Bolt', 'Michael Phelps', 'Kobe Bryant', 'LeBron James',
-    'Fernando Alonso', 'Pau Gasol', 'Andrés Iniesta', 'Iker Casillas',
-    'Zinedine Zidane', 'David Beckham',
-
-    // --- Músicos y cantantes ---
-    'Michael Jackson', 'Madonna', 'Freddie Mercury', 'Elvis Presley',
-    'John Lennon', 'Paul McCartney', 'Bob Marley', 'David Bowie',
-    'Lady Gaga', 'Beyoncé', 'Taylor Swift', 'Rosalía', 'Bad Bunny',
-    'Shakira', 'Ricky Martin', 'Alejandro Sanz', 'Aitana', 'Karol G',
-
-    // --- Streamers y youtubers ---
-    'Ibai Llanos', 'El Rubius', 'AuronPlay', 'TheGrefg', 'Wismichu',
-    'Vegetta777', 'Luzu', 'Mangel', 'Cristinini', 'Arigameplays',
-    'Rivers', 'Ninja', 'PewDiePie', 'MrBeast'
-];
-
+// ----------------------------------------------------------------
+// UTILIDADES
+// ----------------------------------------------------------------
 function obtenerPersonajeAleatorioQuienSoy() {
     return BANCO_PERSONAJES_QUIENSOY[Math.floor(Math.random() * BANCO_PERSONAJES_QUIENSOY.length)];
 }
 
-let partidaQuienSoy = null;
+function nombreDePersonaje(p) {
+    return typeof p === 'string' ? p : p.nombre;
+}
 
+// ----------------------------------------------------------------
+// CREAR PARTIDA
+// ----------------------------------------------------------------
 function crearPartidaQuienSoy() {
     partidaQuienSoy = {
         jugadores: [],
-        puntuaciones: {},         // { nombre: puntos }
+        puntuaciones: {},
         turnoProtagonistaIndex: 0,
         personajeActual: '',
+        personajeActualObj: null,
         rondasJugadas: 0,
         fase: 'configuracion'
     };
@@ -169,7 +93,6 @@ function renderConfiguracionQuienSoy() {
             return;
         }
         partidaQuienSoy.jugadores = nombresValidos;
-        // Inicializar puntuaciones a 0
         partidaQuienSoy.puntuaciones = {};
         nombresValidos.forEach(n => partidaQuienSoy.puntuaciones[n] = 0);
         partidaQuienSoy.turnoProtagonistaIndex = 0;
@@ -220,7 +143,7 @@ function renderAvisoAlejarseProtagonista() {
 }
 
 // ----------------------------------------------------------------
-// FASE 3: ELEGIR EL PERSONAJE
+// FASE 3: ELEGIR PERSONAJE
 // ----------------------------------------------------------------
 function renderEntradaPersonajeQuienSoy() {
     const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
@@ -245,7 +168,9 @@ function renderEntradaPersonajeQuienSoy() {
     input.focus();
 
     document.getElementById('btn-personaje-aleatorio').addEventListener('click', () => {
-        input.value = obtenerPersonajeAleatorioQuienSoy();
+        const personaje = obtenerPersonajeAleatorioQuienSoy();
+        input.value = nombreDePersonaje(personaje);
+        partidaQuienSoy.personajeActualObj = typeof personaje === 'object' ? personaje : null;
         input.focus();
         input.select();
     });
@@ -257,6 +182,11 @@ function renderEntradaPersonajeQuienSoy() {
             return;
         }
         partidaQuienSoy.personajeActual = personaje;
+        // Si se ha escrito a mano, no tenemos info extra
+        if (!partidaQuienSoy.personajeActualObj ||
+            nombreDePersonaje(partidaQuienSoy.personajeActualObj) !== personaje) {
+            partidaQuienSoy.personajeActualObj = null;
+        }
         logEvento(`🎭 Personaje elegido para ${protagonista}.`);
         renderRevelarAlGrupo();
     };
@@ -272,6 +202,16 @@ function renderEntradaPersonajeQuienSoy() {
 // ----------------------------------------------------------------
 function renderRevelarAlGrupo() {
     const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
+    const p = partidaQuienSoy.personajeActualObj;
+    const tieneInfo = p && typeof p === 'object';
+
+    const bloqueInfo = tieneInfo ? `
+        <div class="tarjeta-info-quiensoy">
+            <div class="info-linea"><span class="info-label">Universo:</span> ${p.universo}</div>
+            <div class="info-linea"><span class="info-label">Año:</span> ${p.anio < 0 ? Math.abs(p.anio) + ' a.C.' : p.anio}</div>
+        </div>
+        <div class="frase-curiosa-quiensoy">"${p.frase}"</div>
+    ` : '';
 
     renderVista(`
         <div class="pantalla-juego">
@@ -280,7 +220,8 @@ function renderRevelarAlGrupo() {
             <div class="tarjeta-central tarjeta-personaje">
                 <p class="subtexto">El personaje de ${protagonista} es:</p>
                 <div class="personaje-nombre">${partidaQuienSoy.personajeActual}</div>
-                <p class="subtexto">${protagonista} sigue sin mirar. Cuando todos lo tengáis claro, que vuelva.</p>
+                ${bloqueInfo}
+                <p class="subtexto" style="margin-top:10px;">${protagonista} sigue sin mirar. Cuando todos lo tengáis claro, que vuelva.</p>
             </div>
             <button class="btn-principal" id="btn-que-vuelva">Ya lo sabemos → Que vuelva ${protagonista}</button>
         </div>
@@ -317,14 +258,13 @@ function renderRondaPreguntasQuienSoy() {
 }
 
 // ----------------------------------------------------------------
-// FASE 6: RESULTADO DE LA RONDA Y SIGUIENTE
+// FASE 6: RESULTADO DE LA RONDA
 // ----------------------------------------------------------------
 function mostrarResultadoRondaQuienSoy(acerto) {
     partidaQuienSoy.rondasJugadas++;
     const protagonista = partidaQuienSoy.jugadores[partidaQuienSoy.turnoProtagonistaIndex];
 
     if (acerto) {
-        // Sumar punto al protagonista
         partidaQuienSoy.puntuaciones[protagonista] = (partidaQuienSoy.puntuaciones[protagonista] || 0) + 1;
         logEvento(`✅ ¡${protagonista} adivinó "${partidaQuienSoy.personajeActual}"! +1 punto.`);
         registrarPartidaCompletada();

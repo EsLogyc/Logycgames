@@ -1,5 +1,6 @@
 // ================================================================
-// ÁLBUM CANINO — Datos de las 20 razas
+// ÁLBUM CANINO — Datos de las razas
+// Las razas con subrazas tienen un campo `subrazas: [...]`.
 // ================================================================
 
 const RAZAS_CROMOS = [
@@ -122,7 +123,27 @@ const RAZAS_CROMOS = [
         caracter: 'Testarudo',
         frase: 'Su cuerpo alargado le servía para cazar tejones en madrigueras.',
         adjetivos: ['alargado', 'testarudo', 'ladrador'],
-        apiBreed: 'dachshund'
+        apiBreed: 'dachshund',
+        subrazas: [
+            {
+                id: 'teckel-pelo-corto',
+                nombre: 'Pelo corto',
+                emoji: '🐕',
+                pista: 'Su pelo es liso, pegado al cuerpo, brillante y fácil de mantener.'
+            },
+            {
+                id: 'teckel-pelo-duro',
+                nombre: 'Pelo duro',
+                emoji: '🧹',
+                pista: 'Tiene el pelo áspero y erizado, como un cepillo.'
+            },
+            {
+                id: 'teckel-pelo-largo',
+                nombre: 'Pelo largo',
+                emoji: '🎀',
+                pista: 'Su pelo es largo y sedoso, sobre todo en las orejas y la cola.'
+            }
+        ]
     },
     {
         id: 'beagle',
@@ -245,19 +266,36 @@ function barajarArray(arr) {
 function generarOpcionesRaza(razaCorrecta) {
     const otras = RAZAS_CROMOS.filter(r => r.id !== razaCorrecta.id);
     const distractoras = barajarArray(otras).slice(0, 3);
-    const opciones = barajarArray([razaCorrecta, ...distractoras]);
-    return opciones;
+    return barajarArray([razaCorrecta, ...distractoras]);
 }
 
 // Genera una pregunta aleatoria sobre una raza
-// Tipos: 'foto' (60%) | 'adjetivo' (25%) | 'dato' (15%)
-function generarPreguntaCromos(raza, tipoForzado = null) {
+// Tipos: 'foto' | 'adjetivo' | 'subraza'
+// `desbloqueados` es un Set con los IDs ya conseguidos (razas + subrazas)
+function generarPreguntaCromos(raza, tipoForzado = null, desbloqueados = new Set()) {
     let tipo = tipoForzado;
+
     if (!tipo) {
-        const r = Math.random();
-        if (r < 0.60) tipo = 'foto';
-        else if (r < 0.85) tipo = 'adjetivo';
-        else tipo = 'dato';
+        tipo = Math.random() < 0.60 ? 'foto' : 'adjetivo';
+    }
+
+    if (tipo === 'subraza' && raza.subrazas && raza.subrazas.length > 0) {
+        const pendientes = raza.subrazas.filter(s => !desbloqueados.has(s.id));
+        if (pendientes.length > 0) {
+            const subraza = pendientes[Math.floor(Math.random() * pendientes.length)];
+            const distractoras = barajarArray(
+                raza.subrazas.filter(s => s.id !== subraza.id)
+            ).slice(0, 3);
+            return {
+                tipo: 'subraza',
+                raza: raza,
+                subraza: subraza,
+                pregunta: `"${subraza.pista}" ¿De qué subraza del ${raza.nombre} se trata?`,
+                opciones: barajarArray([subraza, ...distractoras])
+            };
+        }
+        // No hay subrazas pendientes: caer a pregunta de foto
+        tipo = 'foto';
     }
 
     if (tipo === 'foto') {
@@ -269,27 +307,11 @@ function generarPreguntaCromos(raza, tipoForzado = null) {
         };
     }
 
-    if (tipo === 'adjetivo') {
-        const adj = raza.adjetivos[Math.floor(Math.random() * raza.adjetivos.length)];
-        return {
-            tipo: 'adjetivo',
-            raza: raza,
-            pregunta: `¿Qué raza es famosa por ser muy ${adj}?`,
-            opciones: generarOpcionesRaza(raza)
-        };
-    }
-
-    // tipo === 'dato'
-    const campos = [
-        { texto: `¿De qué país es originaria la raza ${raza.nombre}?`, valor: raza.origen },
-        { texto: `¿Qué tamaño tiene la raza ${raza.nombre}?`, valor: raza.tamano },
-        { texto: `¿Cuál es el carácter típico del ${raza.nombre}?`, valor: raza.caracter }
-    ];
-    const campo = campos[Math.floor(Math.random() * campos.length)];
+    const adj = raza.adjetivos[Math.floor(Math.random() * raza.adjetivos.length)];
     return {
-        tipo: 'dato',
+        tipo: 'adjetivo',
         raza: raza,
-        pregunta: campo.texto,
+        pregunta: `¿Qué raza es famosa por ser muy ${adj}?`,
         opciones: generarOpcionesRaza(raza)
     };
 }
