@@ -267,13 +267,13 @@ function renderSopaPartida() {
 
             <div class="tarjeta-central">
                 <p class="sopa-categoria">${cat.nombre}</p>
-                <div class="sopa-grid" id="sopa-grid">${gridHtml}</div>
-                <p class="subtexto" style="margin-top:14px;">Toca la primera y la última letra de la palabra</p>
+                <p class="sopa-palabras-label">Palabras a encontrar</p>
+                <div class="sopa-palabras" id="sopa-palabras">${palabrasHtml}</div>
             </div>
 
             <div class="tarjeta-central">
-                <p class="sopa-palabras-label">Palabras a encontrar</p>
-                <div class="sopa-palabras" id="sopa-palabras">${palabrasHtml}</div>
+                <div class="sopa-grid" id="sopa-grid">${gridHtml}</div>
+                <p class="subtexto" style="margin-top:14px;">Toca la primera y la última letra de la palabra</p>
             </div>
         </div>
     `);

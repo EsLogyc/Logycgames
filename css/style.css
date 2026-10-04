@@ -1765,12 +1765,14 @@ html, body {
     #mobile-left-panel { display: block; }
 
     #columna-central {
-        padding: calc(var(--header-height) + 12px) 14px 20px;
+        padding: calc(var(--header-height) + 12px) 14px 100px;
         width: 100%;
     }
+ 
     #selector-juegos {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 12px;
+        padding-bottom: 40px;
     }
 
     #main-header { padding: 0 12px; }
@@ -2166,4 +2168,11 @@ html, body {
     text-align: center;
     max-width: 320px;
     letter-spacing: -0.3px;
+}
+
+/* Fix móvil — Adivina el Código: espacio extra abajo para el teclado */
+@media (max-width: 820px) {
+    .pantalla-juego:has(#zona-input-codigo) {
+        padding-bottom: 280px;
+    }
 }

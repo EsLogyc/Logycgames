@@ -376,6 +376,22 @@ function inicializarCasillasCodigo() {
     });
 
     casillas[0].focus();
+    
+        // Fix móvil robusto: cuando el teclado se abre, hacer scroll hasta la zona del input
+    if (window.visualViewport) {
+        const zonaInput = document.getElementById('zona-input-codigo');
+        const ajustarScroll = () => {
+            if (document.activeElement && document.activeElement.classList.contains('casilla-codigo')) {
+                setTimeout(() => {
+                    if (zonaInput) {
+                        zonaInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
+        };
+        window.visualViewport.addEventListener('resize', ajustarScroll);
+        window.visualViewport.addEventListener('scroll', ajustarScroll);
+    }
 }
 
 function mostrarMensajeCodigo(texto, clase) {
