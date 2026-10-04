@@ -645,8 +645,10 @@ html, body {
 
 #selector-juegos {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 720px;
+    margin: 0 auto;
 }
 .juego-card {
     background: var(--bg-card);
@@ -1783,8 +1785,9 @@ html, body {
 /* --- 480px: móvil pequeño --- */
 @media (max-width: 480px) {
     #selector-juegos {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        max-width: 100%;
     }
     .juego-card { padding: 16px 12px; }
     .juego-card .icono { font-size: 2rem; }

@@ -20,6 +20,17 @@ function obtenerPalabraAleatoriaAhorcado() {
 }
 
 // ================================================================
+// UTILIDAD: normaliza una letra (quita tildes y diéresis)
+// "Á" → "A", "Ü" → "U", "Ñ" → "Ñ" (la ñ se mantiene)
+// ================================================================
+function normalizarLetraAh(letra) {
+    return letra
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toUpperCase();
+}
+
+// ================================================================
 // AHORCADO EN EQUIPO — ESTADO Y FLUJO DEL JUEGO
 // ================================================================
 let partidaAhorcado = null;
@@ -153,21 +164,26 @@ function renderAviso(callbackContinuar) {
 function renderJuegoAhorcado() {
     setTituloJuego('Ahorcado — Adivinando en equipo');
     const palabra = partidaAhorcado.palabraSecreta;
+    const palabraNorm = normalizarLetraAh(palabra);
     const usadas = partidaAhorcado.letrasUsadas;
 
+    // Huecos: se rellenan cuando la letra normalizada ha sido usada, pero se
+    // muestra la letra ORIGINAL (con tilde si la tiene)
     const huecos = palabra.split('').map(letra => {
         if (letra === ' ') return `<div class="letra-hueco espacio"></div>`;
-        return `<div class="letra-hueco">${usadas.includes(letra) ? letra : ''}</div>`;
+        const letraNorm = normalizarLetraAh(letra);
+        return `<div class="letra-hueco">${usadas.includes(letraNorm) ? letra : ''}</div>`;
     }).join('');
 
+    // Teclado: cada letra se marca acertada/fallada comparando con la palabra normalizada
     const teclas = ALFABETO.map(letra => {
         let clase = '';
-        if (usadas.includes(letra)) clase = palabra.includes(letra) ? 'acertada' : 'fallada';
+        if (usadas.includes(letra)) clase = palabraNorm.includes(letra) ? 'acertada' : 'fallada';
         return `<button data-letra="${letra}" class="${clase}" ${usadas.includes(letra) ? 'disabled' : ''}>${letra}</button>`;
     }).join('');
 
-    const perdidas = palabra.split('').every(l => l === ' ' || usadas.includes(l));
-    const ganaron = perdidas;
+    // Ganar: todas las letras de la palabra (normalizadas) están en usadas
+    const ganaron = palabra.split('').every(l => l === ' ' || usadas.includes(normalizarLetraAh(l)));
     const perdieron = partidaAhorcado.fallos >= INTENTOS_MAX_AHORCADO;
 
     renderVista(`
@@ -196,7 +212,8 @@ function renderJuegoAhorcado() {
                 const letra = btn.dataset.letra;
                 if (partidaAhorcado.letrasUsadas.includes(letra)) return;
                 partidaAhorcado.letrasUsadas.push(letra);
-                if (!palabra.includes(letra)) partidaAhorcado.fallos++;
+                // Comparación con la palabra normalizada (sin tildes ni diéresis)
+                if (!palabraNorm.includes(letra)) partidaAhorcado.fallos++;
                 renderJuegoAhorcado();
             });
         });
@@ -209,7 +226,7 @@ function renderJuegoAhorcado() {
             registrarPartidaCompletada();
             if (ganaron) {
                 registrarVictoria();
-                sumarRetoSuperado();              // 👈 AÑADIDO
+                sumarRetoSuperado();
             }
         }
         document.getElementById('btn-otra-ahorcado').addEventListener('click', crearPartidaAhorcado);
