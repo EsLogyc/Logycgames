@@ -202,9 +202,7 @@ function mostrarSelectorJuegos() {
                 crearPartidaTrivial();
             } else if (id === 'pasapalabra') {
                 crearPartidaPasapalabra();
-            } else if (id === 'trivialperros') {
-                crearPartidaTrivialPerros();
-            } else if (id === 'quiensoy') {
+            }  else if (id === 'quiensoy') {
                 crearPartidaQuienSoy();
             } else if (id === 'codigo') {
                  crearMenuCodigo();
